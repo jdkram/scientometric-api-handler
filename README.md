@@ -13,8 +13,9 @@ A tool for batch downloading and inspecting hypotheses from [EuropePMC].
 
 ### Find end of sentence ###
 
+[Demonstrated on sample text in Rubular](http://www.rubular.com/r/ZDDLghJHQd).
 ```ruby
-
+/(?<!\s\w|\d\))(?:\.|\?|\!)(?= [^a-z]|$|\n)/
 ```
 
 
