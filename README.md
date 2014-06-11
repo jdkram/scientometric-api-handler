@@ -4,8 +4,10 @@ A tool for batch downloading and inspecting hypotheses from [EuropePMC].
 
 ## TODO ##
 
+
 - [ ] Clean up with [rubocop][]
 - [ ] Extend to include Altmetric data
+- [ ] Look in to citations - can we pull in the complete list of citations?
 
 ## Regex ##
 
