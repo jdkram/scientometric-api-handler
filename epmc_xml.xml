@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<html>
+  <body>
+    <responsewrapper>
+      <version>3.0.1</version>
+      <hitcount>1</hitcount>
+      <request>
+        <query>9855500</query>
+        <dataset>METADATA</dataset>
+        <resulttype>core</resulttype>
+        <page>1</page>
+      </request>
+      <resultlist>
+        <result>
+          <id>9855500</id>
+          <source>MED</source>
+          <pmid>9855500</pmid>
+          <doi>10.1212/wnl.51.6.1546</doi>
+          <title>Frontotemporal lobar degeneration: a consensus on clinical diagnostic criteria.</title>
+          <authorstring>Neary D, Snowden JS, Gustafson L, Passant U, Stuss D, Black S, Freedman M, Kertesz A, Robert PH, Albert M, Boone K, Miller BL, Cummings J, Benson DF.</authorstring>
+          <authorlist>
+            <author>
+              <fullname>Neary D</fullname>
+              <lastname>Neary</lastname>
+              <initials>D</initials>
+            </author>
+            <author>
+              <fullname>Snowden JS</fullname>
+              <lastname>Snowden</lastname>
+              <initials>JS</initials>
+            </author>
+            <author>
+              <fullname>Gustafson L</fullname>
+              <lastname>Gustafson</lastname>
+              <initials>L</initials>
+            </author>
+            <author>
+              <fullname>Passant U</fullname>
+              <lastname>Passant</lastname>
+              <initials>U</initials>
+            </author>
+            <author>
+              <fullname>Stuss D</fullname>
+              <lastname>Stuss</lastname>
+              <initials>D</initials>
+            </author>
+            <author>
+              <fullname>Black S</fullname>
+              <lastname>Black</lastname>
+              <initials>S</initials>
+            </author>
+            <author>
+              <fullname>Freedman M</fullname>
+              <lastname>Freedman</lastname>
+              <initials>M</initials>
+            </author>
+            <author>
+              <fullname>Kertesz A</fullname>
+              <lastname>Kertesz</lastname>
+              <initials>A</initials>
+            </author>
+            <author>
+              <fullname>Robert PH</fullname>
+              <lastname>Robert</lastname>
+              <initials>PH</initials>
+            </author>
+            <author>
+              <fullname>Albert M</fullname>
+              <lastname>Albert</lastname>
+              <initials>M</initials>
+            </author>
+            <author>
+              <fullname>Boone K</fullname>
+              <lastname>Boone</lastname>
+              <initials>K</initials>
+            </author>
+            <author>
+              <fullname>Miller BL</fullname>
+              <lastname>Miller</lastname>
+              <initials>BL</initials>
+            </author>
+            <author>
+              <fullname>Cummings J</fullname>
+              <lastname>Cummings</lastname>
+              <initials>J</initials>
+            </author>
+            <author>
+              <fullname>Benson DF</fullname>
+              <lastname>Benson</lastname>
+              <initials>DF</initials>
+            </author>
+          </authorlist>
+          <journalinfo>
+            <issue>6</issue>
+            <volume>51</volume>
+            <journalissueid>956091</journalissueid>
+            <dateofpublication>1998 Dec</dateofpublication>
+            <monthofpublication>12</monthofpublication>
+            <yearofpublication>1998</yearofpublication>
+            <journal>
+              <title>Neurology</title>
+              <isoabbreviation>Neurology</isoabbreviation>
+              <medlineabbreviation>Neurology</medlineabbreviation>
+              <nlmid>0401060</nlmid>
+              <issn>0028-3878</issn>
+              <essn>1526-632X</essn>
+            </journal>
+          </journalinfo>
+          <pageinfo>1546-1554</pageinfo>
+          <abstracttext>OBJECTIVE: To improve clinical recognition and provide research diagnostic criteria for three clinical syndromes associated with frontotemporal lobar degeneration. METHODS: Consensus criteria for the three prototypic syndromes-frontotemporal dementia, progressive nonfluent aphasia, and semantic dementia-were developed by members of an international workshop on frontotemporal lobar degeneration. These criteria build on earlier published clinical diagnostic guidelines for frontotemporal dementia produced by some of the workshop members. RESULTS: The consensus criteria specify core and supportive features for each of the three prototypic clinical syndromes and provide broad inclusion and exclusion criteria for the generic entity of frontotemporal lobar degeneration. The criteria are presented in lists, and operational definitions for features are provided in the text. CONCLUSIONS: The criteria ought to provide the foundation for research work into the neuropsychology, neuropathology, genetics, molecular biology, and epidemiology of these important clinical disorders that account for a substantial proportion of cases of primary degenerative dementia occurring before the age of 65 years.</abstracttext>
+          <affiliation>Manchester Royal Infirmary, UK.</affiliation>
+          <language>eng</language>
+          <pubmodel>Print</pubmodel>
+          <pubtypelist>
+            <pubtype>Consensus Development Conference</pubtype>
+            <pubtype>Journal Article</pubtype>
+            <pubtype>Review</pubtype>
+            <pubtype>Research Support, Non-U.S. Gov't</pubtype>
+            <pubtype>Research Support, U.S. Gov't, P.H.S.</pubtype>
+          </pubtypelist>
+          <grantslist>
+            <grant>
+              <agency>Wellcome Trust</agency>
+              <orderin>0</orderin>
+            </grant>
+            <grant>
+              <grantid>AG 10123</grantid>
+              <agency>NIA NIH HHS</agency>
+              <acronym>AG</acronym>
+              <orderin>0</orderin>
+            </grant>
+          </grantslist>
+          <meshheadinglist>
+            <meshheading>
+              <majortopic_yn>N</majortopic_yn>
+              <descriptorname>Frontal Lobe</descriptorname>
+              <meshqualifierlist>
+                <meshqualifier>
+                  <abbreviation>PA</abbreviation>
+                  <qualifiername>pathology</qualifiername>
+                  <majortopic_yn>Y</majortopic_yn>
+                </meshqualifier>
+              </meshqualifierlist>
+            </meshheading>
+            <meshheading>
+              <majortopic_yn>N</majortopic_yn>
+              <descriptorname>Temporal Lobe</descriptorname>
+              <meshqualifierlist>
+                <meshqualifier>
+                  <abbreviation>PA</abbreviation>
+                  <qualifiername>pathology</qualifiername>
+                  <majortopic_yn>Y</majortopic_yn>
+                </meshqualifier>
+              </meshqualifierlist>
+            </meshheading>
+            <meshheading>
+              <majortopic_yn>N</majortopic_yn>
+              <descriptorname>Humans</descriptorname>
+            </meshheading>
+            <meshheading>
+              <majortopic_yn>N</majortopic_yn>
+              <descriptorname>Dementia</descriptorname>
+              <meshqualifierlist>
+                <meshqualifier>
+                  <abbreviation>DI</abbreviation>
+                  <qualifiername>diagnosis</qualifiername>
+                  <majortopic_yn>Y</majortopic_yn>
+                </meshqualifier>
+                <meshqualifier>
+                  <abbreviation>PA</abbreviation>
+                  <qualifiername>pathology</qualifiername>
+                  <majortopic_yn>Y</majortopic_yn>
+                </meshqualifier>
+              </meshqualifierlist>
+            </meshheading>
+          </meshheadinglist>
+          <subsetlist>
+            <subset>
+              <code>AIM</code>
+              <name>Core clinical journals</name>
+            </subset>
+            <subset>
+              <code>IM</code>
+              <name>Index Medicus</name>
+            </subset>
+          </subsetlist>
+          <fulltexturllist>
+            <fulltexturl>
+              <availability>Free</availability>
+              <availabilitycode>F</availabilitycode>
+              <documentstyle>abs</documentstyle>
+              <site>www.neurology.org</site>
+              <url>http://intl.neurology.org/cgi/content/abstract/51/6/1546</url>
+            </fulltexturl>
+            <fulltexturl>
+              <availability>Subscription required</availability>
+              <availabilitycode>S</availabilitycode>
+              <documentstyle>doi</documentstyle>
+              <site>DOI</site>
+              <url>http://dx.doi.org/10.1212/WNL.51.6.1546</url>
+            </fulltexturl>
+          </fulltexturllist>
+          <commentcorrectionlist>
+            <commentcorrection>
+              <id>10496296</id>
+              <source>MED</source>
+              <reference>Neurology. 1999 Sep 22;53(5):1159</reference>
+              <type>Comment in</type>
+              <orderin>1</orderin>
+            </commentcorrection>
+          </commentcorrectionlist>
+          <isopenaccess>N</isopenaccess>
+          <inepmc>N</inepmc>
+          <inpmc>N</inpmc>
+          <citedbycount>1279</citedbycount>
+          <hasreferences>N</hasreferences>
+          <hastextminedterms>N</hastextminedterms>
+          <hasdbcrossreferences>N</hasdbcrossreferences>
+          <haslabslinks>N</haslabslinks>
+          <hastmaccessionnumbers>N</hastmaccessionnumbers>
+          <dateofcompletion>1998-12-30T00:00:00Z</dateofcompletion>
+          <dateofcreation>1998-12-30T00:00:00Z</dateofcreation>
+          <dateofrevision>2009-09-29T00:00:00+01:00</dateofrevision>
+          <lucenescore>106.2496</lucenescore>
+        </result>
+      </resultlist>
+    </responsewrapper>
+  </body>
+</html>
