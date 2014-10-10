@@ -18,11 +18,11 @@ PUBMED_URL_BASE = 'http://www.ncbi.nlm.nih.gov/pubmed/?term='
 EPMC_URL_BASE = 'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='
 EPMC_URL_TAIL = '&resultType=core'
 
-ALTMETRIC_URL_BASE = 'http://api.altmetric.com/v1/pmid/'
-# ALTMETRIC_API_KEY Loaded from config
-
 GRIST_URL_BASE = 'http://plus.europepmc.org/GristAPI/rest/get/query='
 GRIST_URL_TAIL = '&resultType=core'
+
+ALTMETRIC_URL_BASE = 'http://api.altmetric.com/v1/pmid/'
+# ALTMETRIC_API_KEY Loaded from config
 
 ORCID_URL_BASE = 'http://pub.orcid.org/v1.1/'
 ORCID_URL_TAIL = '/orcid-profile'
@@ -198,13 +198,7 @@ def get_epmc_citations(pmid, src: false, raw: false)
       sleep 1
     end
   end
-  if raw
-    then return epmc_xml
-  else
-    return article
-  end
-
-end 
+end
 
 def get_altmetric(pmid)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
@@ -255,14 +249,22 @@ def get_altmetric(pmid)
   end
 end
 
-def get_grist(grantid)
+def get_grist(grantid, raw: false)
+  p = URI::Parser.new
+  grantid = p.escape(grantid) # Should put this on other calls
   url = GRIST_URL_BASE + 'gid:' + grantid + GRIST_URL_TAIL
-  grist_xml = Nokogiri::HTML(open(url))
   grant = {}
-    GRIST_ATTRIBUTES.each do
-     |key,value| grant["grist_" + key.to_s] = remove_tag(grist_xml.xpath(value)[0].to_s)
-    end
-  return grant
+  grist_xml = Nokogiri::HTML(open(url))  
+  # puts "url: #{url}"
+  GRIST_ATTRIBUTES.each do
+   |key,value| grant["grist_" + key.to_s] = remove_tag(grist_xml.xpath(value)[0].to_s)
+  end
+
+  if raw then
+    return grist_xml
+  else
+    return grant
+  end
 
   rescue OpenURI::HTTPError => e
   if e.message == '404 Not Found'

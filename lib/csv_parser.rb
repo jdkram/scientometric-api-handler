@@ -122,4 +122,28 @@ def orcid_csv_create(inputcsv, outputcsv = false)
   end
 end
 
+def grist_csv_create(inputcsv, outputcsv)
+  CSV.open(outputcsv, 'w') do |csv|
+    headers, grantids = [], []
+    get_grist('091769').each { |header, value| headers << header.to_s }
+    csv << headers # Create header row
+    grantids = CSV.read(inputcsv) # Input data (efficient?)
+    queries_per_second = 2 # Rate limit
+    pause = 1.0 / queries_per_second
+    puts "Parsing #{grantids.length}.
+    This will take at least #{grantids.length * pause} seconds."
+    i = 0
+    grantids.each do |grantid|
+      row = []
+      # Create array from hash values
+      get_grist(grantid[0]).each { |k,v| row << v } 
+      csv << row
+      sleep pause # Let's not thrash their server
+      i += 1
+      puts "#{i} / #{grantids.length} complete. Approximately #{((grantids.length - i) * pause).round} seconds remain" if i % 5 == 0
+    end
+    puts 'Task complete!'
+  end
+end
+
 
