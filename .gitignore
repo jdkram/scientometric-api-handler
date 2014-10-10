@@ -1,3 +1,5 @@
 config.rb
 test*.csv
 test/*
+*.zip
+policy-project/*.csv
