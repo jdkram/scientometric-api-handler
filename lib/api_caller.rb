@@ -45,16 +45,6 @@ TEST_PMIDS = %w(
 
 @test_pmid = TEST_PMIDS.sample # Grab a random test PMID
 
-EPMC_ATTRIBUTES = {
-  title: '//result//title',
-  journal: '//result//journal//title',
-  authors: '//result//authorstring',
-  abstract: '//result//abstracttext',
-  grantagency: '//result//grantslist//grant//agency',
-  grantID: '//result//grantslist//grant//grantid',
-  cited_by_count: '//citedbycount'
-}
-
 # Wouldn't need this at all we just put everything in the hashed JSON in to an activerecord.
 ALTMETRIC_TOPLEVEL_ATTRIBUTES = {
   title: 'title',
@@ -126,9 +116,6 @@ def get_epmc(pmid, raw: false)
   url = EPMC_URL_BASE + pmid + EPMC_URL_TAIL
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
-  # EPMC_ATTRIBUTES.each do
-     # |key,value| article["epmc_" + key.to_s] = remove_tag(epmc_xml.xpath(value)[0].to_s)
-  # end
   article[:pmid] = pmid
   article[:doi] = remove_tag(epmc_xml.xpath('//doi')[0].to_s.chomp)
   article[:title] = remove_tag(epmc_xml.xpath('//result//title')[0].to_s.chomp)

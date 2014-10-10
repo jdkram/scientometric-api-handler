@@ -8,8 +8,8 @@ HYPOTHESIS_SYNONYMS = %w(
   theory theorem thesis conjecture supposition
   speculation postulation postulate proposition premise
   surmise assumption presumption presupposition notion
-  concept idea contention opinion view
-  belief)
+  concept idea contention opinion view belief
+  )
 
 
 POSITIVE_INDICATORS = %w(support prove confirm extend)
