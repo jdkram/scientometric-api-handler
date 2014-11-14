@@ -265,6 +265,7 @@ def get_altmetric_json(pmid)
   url = ALTMETRIC_URL_BASE + pmid + ALTMETRIC_API_KEY
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
+  return altmetric_json
   # return altmetric_response.meta # Returns the daily rate stuff
 end
 
