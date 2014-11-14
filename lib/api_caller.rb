@@ -117,9 +117,9 @@ def get_epmc(pmid, raw: false)
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
   article[:pmid] = pmid
-  article[:doi] = remove_tag(epmc_xml.xpath('//doi')[0].to_s.chomp)
-  article[:title] = remove_tag(epmc_xml.xpath('//result//title')[0].to_s.chomp)
-  article[:journal] = remove_tag(epmc_xml.xpath('//journal//title')[0].to_s.chomp)
+  article[:doi] = remove_tag(epmc_xml.at_xpath('//doi').to_s.chomp)
+  article[:title] = remove_tag(epmc_xml.at_xpath('//result//title').to_s.chomp)
+  article[:journal] = remove_tag(epmc_xml.at_xpath('//journal//title').to_s.chomp)
   authorlist = []
   epmc_xml.xpath('//author//fullname').each {
     |author| authorlist << remove_tag(author.to_s)
@@ -140,12 +140,12 @@ def get_epmc(pmid, raw: false)
     grantid_match = grantid_regex.match(grant_xml)
     agency_match = agency_regex.match(grant_xml)
 
-    article[:authorstring] = remove_tag(epmc_xml.xpath('//authorstring')[0].to_s.chomp)
+    article[:authorstring] = remove_tag(epmc_xml.at_xpath('//authorstring').to_s.chomp)
     article[:firstauthor] = authorlist[0]
     article[:lastauthor] = authorlist[-1]
-    article[:url] = remove_tag(epmc_xml.xpath('//url')[0].to_s.chomp)
+    article[:url] = remove_tag(epmc_xml.at_xpath('//url').to_s.chomp)
     # First affiliation we can find
-    article[:affiliation] = remove_tag(epmc_xml.xpath('//result/affiliation')[0].to_s.chomp)
+    article[:affiliation] = remove_tag(epmc_xml.at_xpath('//result/affiliation').to_s.chomp)
     if agency_match then
         article[agency_key] = agency_match[1]
       else
@@ -158,8 +158,8 @@ def get_epmc(pmid, raw: false)
         article[id_key] = 'N/A'
     end
   end
-  article[:abstract] = remove_tag(epmc_xml.xpath('//abstracttext')[0].to_s.chomp)
-  article[:dateofcreation] = remove_tag(epmc_xml.xpath('//dateofcreation')[0].to_s.chomp)
+  article[:abstract] = remove_tag(epmc_xml.at_xpath('//abstracttext').to_s.chomp)
+  article[:dateofcreation] = remove_tag(epmc_xml.at_xpath('//dateofcreation').to_s.chomp)
   if raw then
     return epmc_xml
   else
@@ -176,12 +176,12 @@ def get_epmc_citations(pmid, src: false, raw: false)
   then
     url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
     epmc_xml = Nokogiri::HTML(open(url))
-    article["#{src}_citation_count".to_sym] = remove_tag(epmc_xml.xpath('//hitcount')[0].to_s)
+    article["#{src}_citation_count".to_sym] = remove_tag(epmc_xml.at_xpath('//hitcount').to_s)
   else
     sources.each do |source|
       url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
       epmc_xml = Nokogiri::HTML(open(url))
-      article["#{source}_citation_count".to_sym] = remove_tag(epmc_xml.xpath('//hitcount')[0].to_s)
+      article["#{source}_citation_count".to_sym] = remove_tag(epmc_xml.at_xpath('//hitcount').to_s)
       sleep 1
     end
   end
