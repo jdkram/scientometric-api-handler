@@ -46,7 +46,7 @@ TEST_PMIDS = %w(
 @test_pmid = TEST_PMIDS.sample # Grab a random test PMID
 
 # Wouldn't need this at all we just put everything in the hashed JSON in to an activerecord.
-ALTMETRIC_TOPLEVEL_ATTRIBUTES = {
+ALTMETRIC_PRIMARY_ATTRIBUTES = {
   title: 'title',
   doi: 'doi',
   pmid: 'pmid',
@@ -74,13 +74,14 @@ ALTMETRIC_TOPLEVEL_ATTRIBUTES = {
   top_quotes: 'tq',
   details_url: 'details_url',
   published_on: 'published_on'
-              # "similar_age_this_journal_3m": {
-              #   selected quotes
-              #   geo
-              #   # Where are they getting demographic data from?
-              #   # Researcher / practitioner
-              #   demographic # location important
 }
+
+ALTMETRIC_SECONDARY_ATTRIBUTES = [
+  :altmetric_similar_age_journal_3m_percentile,
+  :altmetric_one_week_score,
+  :altmetric_six_month_score,
+  :altmetric_one_year_score
+]
 
 GRIST_ATTRIBUTES = {
   grantid: '//grant//id',
@@ -104,11 +105,6 @@ ORCID_ATTRIBUTES = {
   other_name: '//other_name',
 }
 
-def remove_tag(string)
-  string.gsub(/\<[^\<]+\>/, '')
-end
-
-
 def get_epmc(pmid, raw: false)
   # Add sanitisation
   pmid = pmid.to_s
@@ -118,17 +114,18 @@ def get_epmc(pmid, raw: false)
   article = {}
   article[:pmid] = pmid
   article[:doi] = epmc_xml.at_xpath('//doi').content
-  article[:title] = remove_tag(epmc_xml.at_xpath('//result//title').to_s.chomp)
-  article[:journal] = remove_tag(epmc_xml.at_xpath('//journal//title').to_s.chomp)
+  article[:title] = epmc_xml.at_xpath('//result//title').content
+  article[:journal] = epmc_xml.at_xpath('//journal//title').content
   authorlist = []
   epmc_xml.xpath('//author//fullname').each {
-    |author| authorlist << remove_tag(author.to_s)
+    |author| authorlist << author.content
   }
   pubtypes = []
   epmc_xml.xpath('//pubtype').each {
-    |pubtype| pubtypes << remove_tag(pubtype.to_s)
+    |pubtype| pubtypes << pubtype.content
   }
 
+  # Gather info for up to 10 grants
   (1..10).each do |n|
     id_key = ('grant_' + n.to_s + '_id').to_sym
     agency_key = ('grant_' + n.to_s + '_agency').to_sym
@@ -140,12 +137,12 @@ def get_epmc(pmid, raw: false)
     grantid_match = grantid_regex.match(grant_xml)
     agency_match = agency_regex.match(grant_xml)
 
-    article[:authorstring] = remove_tag(epmc_xml.at_xpath('//authorstring').to_s.chomp)
+    article[:authorstring] = epmc_xml.at_xpath('//authorstring').content
     article[:firstauthor] = authorlist[0]
     article[:lastauthor] = authorlist[-1]
-    article[:url] = remove_tag(epmc_xml.at_xpath('//url').to_s.chomp)
+    article[:url] = epmc_xml.at_xpath('//url').content
     # First affiliation we can find
-    article[:affiliation] = remove_tag(epmc_xml.at_xpath('//result/affiliation').to_s.chomp)
+    article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content
     if agency_match then
         article[agency_key] = agency_match[1]
       else
@@ -158,8 +155,8 @@ def get_epmc(pmid, raw: false)
         article[id_key] = 'N/A'
     end
   end
-  article[:abstract] = remove_tag(epmc_xml.at_xpath('//abstracttext').to_s.chomp)
-  article[:dateofcreation] = remove_tag(epmc_xml.at_xpath('//dateofcreation').to_s.chomp)
+  article[:abstract] = epmc_xml.at_xpath('//abstracttext').content
+  article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
   if raw then
     return epmc_xml
   else
@@ -176,12 +173,12 @@ def get_epmc_citations(pmid, src: false, raw: false)
   then
     url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
     epmc_xml = Nokogiri::HTML(open(url))
-    article["#{src}_citation_count".to_sym] = remove_tag(epmc_xml.at_xpath('//hitcount').to_s)
+    article["#{src}_citation_count".to_sym] = epmc_xml.at_xpath('//hitcount').content
   else
     sources.each do |source|
       url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
       epmc_xml = Nokogiri::HTML(open(url))
-      article["#{source}_citation_count".to_sym] = remove_tag(epmc_xml.at_xpath('//hitcount').to_s)
+      article["#{source}_citation_count".to_sym] = epmc_xml.at_xpath('//hitcount').content
       sleep 1
     end
   end
@@ -195,7 +192,7 @@ def get_altmetric(pmid)
   article[:pmid] = pmid
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
-  ALTMETRIC_TOPLEVEL_ATTRIBUTES.each do
+  ALTMETRIC_PRIMARY_ATTRIBUTES.each do
         |key,value| article[("altmetric_" + key.to_s).to_sym] = altmetric_json[value]
   end
   # Correct the below, ugly way of doing things
@@ -212,27 +209,28 @@ def get_altmetric(pmid)
 
   rescue OpenURI::HTTPError => e
     if e.message == '404 Not Found'
-      ALTMETRIC_TOPLEVEL_ATTRIBUTES.each do
+      # Blank out the primary attributes
+      ALTMETRIC_PRIMARY_ATTRIBUTES.each do
         |key,value| article[("altmetric_" + key.to_s).to_sym] = nil
       end
-      article[:altmetric_similar_age_journal_3m_percentile] = nil # Ugh. Correct this stuff.
-      article[:altmetric_one_week_score] = nil
-      article[:altmetric_six_month_score] = nil
-      article[:altmetric_one_year_score] = nil
-      article['altmetric_STATUS'] = "NO ENTRY at #{Time.now}"
+      # Blank out the secondary attributes
+      ALTMETRIC_SECONDARY_ATTRIBUTES.each do |symbol|
+        article[symbol] = nil
+      end
+      article[:altmetric_STATUS] = "NO ENTRY at #{Time.now}"
       return article
     else
       raise e
     end
+
   rescue Errno::ETIMEDOUT
-    ALTMETRIC_TOPLEVEL_ATTRIBUTES.each do
+    ALTMETRIC_PRIMARY_ATTRIBUTES.each do
         |key,value| article[("altmetric_" + key.to_s).to_sym] = nil
       end
-      article[:altmetric_similar_age_journal_3m_percentile] = nil # Ugh. Correct this stuff.
-      article[:altmetric_one_week_score] = nil
-      article[:altmetric_six_month_score] = nil
-      article[:altmetric_one_year_score] = nil
-      article['altmetric_STATUS'] = "TIMEOUT at #{Time.now}"
+    ALTMETRIC_SECONDARY_ATTRIBUTES.each do |symbol|
+      article[symbol] = nil
+    end
+    article[:altmetric_STATUS] = "TIMEOUT at #{Time.now}"
   end
 end
 
@@ -244,7 +242,7 @@ def get_grist(grantid, raw: false)
   grist_xml = Nokogiri::HTML(open(url))  
   # puts "url: #{url}"
   GRIST_ATTRIBUTES.each do
-   |key,value| grant["grist_" + key.to_s] = remove_tag(grist_xml.xpath(value)[0].to_s)
+   |key,value| grant["grist_" + key.to_s] = grist_xml.xpath(value)[0].content
   end
 
   if raw then
@@ -275,7 +273,7 @@ def get_orcid(id, raw: false)
   orcid_xml = Nokogiri::HTML(open(url))
   article = {}
   ORCID_ATTRIBUTES.each do
-     |key,value| article[("orcid_" + key.to_s).to_sym] = remove_tag(orcid_xml.xpath(value)[0].to_s)
+     |key,value| article[("orcid_" + key.to_s).to_sym] = orcid_xml.xpath(value)[0].content
   end
   article[:orcid_works_count] = orcid_xml.xpath('//orcid-work').length
   # TODO: transform this to create one entry per work?
