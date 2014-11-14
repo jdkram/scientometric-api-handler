@@ -117,7 +117,7 @@ def get_epmc(pmid, raw: false)
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
   article[:pmid] = pmid
-  article[:doi] = remove_tag(epmc_xml.at_xpath('//doi').to_s.chomp)
+  article[:doi] = epmc_xml.at_xpath('//doi').content
   article[:title] = remove_tag(epmc_xml.at_xpath('//result//title').to_s.chomp)
   article[:journal] = remove_tag(epmc_xml.at_xpath('//journal//title').to_s.chomp)
   authorlist = []
