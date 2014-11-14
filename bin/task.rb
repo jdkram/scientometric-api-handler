@@ -1,39 +1,11 @@
+# Temporary file which asks as taskmanager.
+
+require 'rushover'
 require_relative '../lib/api_caller'
 require_relative '../lib/csv_parser'
 
-require 'rushover'
-
 t1 = Time.now
-puts "Task started at #{"%02d" % t1.getlocal.hour}:#{t1.getlocal.min}"
-
-# Temporary file which calls other parts, runs tasks.
-
-# Jo wants:
-# Grant ID
-# PI Name
-# Project Title
-# Institution
-# Grant Type
-# Stream
-# Grant Dates
-# 
-# Take their grantnumber, feed it in to GRIST, get these details.
-
-def csv_update(inputcsv, outputcsv)
-  inputdata= CSV.read(inputcsv)
-  headers = inputdata[0]
-  CSV.open(outputcsv, 'w') do |csv|
-  csv << headers
-  
-  # Check headers in original CSV, find PMID
-  headers
-  # Check entries look PMID-y
-
-  # Find the header with grantID
-  # Take grant ID, look it up in GRIST
-  return headers
-  end
-end
+puts "Task started at #{"%02d" % t1.getlocal.hour}:#{"%02d" % t1.getlocal.min}"
 
 pmid1 = '20059573'
 pmid2 = '18755769'
@@ -55,12 +27,13 @@ def batch_altmetric(first, last)
   end
 end
 
-# puts get_altmetric_json(pmid4)
+puts get_altmetric('j2')[:altmetric_STATUS]
 # File.open('../test/altmetric_hash', 'w'){ |file| file.write(get_altmetric_json(pmid3))}
 
 # Check citations > Request Parameters section
 # http://www.ebi.ac.uk/europepmc/webservices/rest/HIR/9855500/citations
 
+# puts get_epmc(9855500, raw: false)
 # puts get_epmc(9855500, raw: true)
 # puts get_epmc_citations(9855500)
 
@@ -75,7 +48,7 @@ end
 
 # batch_altmetric(0,0)
 
-xml = get_epmc('24737131', {raw: true})
+# xml = get_epmc('24737131', {raw: true})
 
 t2 = Time.now
 notification_message = "Task finished at #{"%02d" % t2.getlocal.hour}:#{"%02d" % t2.getlocal.min}"
