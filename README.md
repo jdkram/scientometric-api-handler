@@ -55,7 +55,7 @@ PMID
 
 ## Error handling ##
 
-I keep encountering an error when attempting batch:
+I keep encountering an error when attempting a batch:
 <http://api.altmetric.com/v1/pmid/23197817> causes issues due to there being no context data, unlike for every other entry in existence.
 
 Erroring entries:
