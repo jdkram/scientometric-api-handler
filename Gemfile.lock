@@ -5,14 +5,22 @@ GEM
     ansi (1.4.3)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
-    httparty (0.13.3)
-      json (~> 1.8)
-      multi_xml (>= 0.5.2)
     json (1.8.1)
+    mime-types (2.4.3)
+    mini_portile (0.6.1)
     minitest (4.7.5)
-    multi_xml (0.5.5)
+    netrc (0.8.0)
+    nokogiri (1.6.4.1)
+      mini_portile (~> 0.6.0)
     rake (10.3.2)
+    rest-client (1.7.2)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
+    rushover (0.3.0)
+      json
+      rest-client
     safe_yaml (1.0.4)
+    smarter_csv (1.0.19)
     turn (0.9.7)
       ansi
       minitest (~> 4)
@@ -25,8 +33,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  httparty
+  json
+  nokogiri
   rake
+  rushover
+  smarter_csv
   turn
   vcr
   webmock

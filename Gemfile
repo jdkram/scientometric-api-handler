@@ -2,7 +2,10 @@
 
 source 'https://rubygems.org'
  
-gem 'httparty'
+gem 'rushover'
+gem 'nokogiri'
+gem 'json'
+gem 'smarter_csv'
  
 group :test do
   gem 'webmock'
