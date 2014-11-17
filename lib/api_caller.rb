@@ -11,21 +11,12 @@ require_relative '../config'
 ################################################################
 # Grab that EPMC data
 
-# URL to retrieve human-readable HTML
-PUBMED_URL_BASE = 'http://www.ncbi.nlm.nih.gov/pubmed/?term='
-
-# Retrieves XML from EPMC
-EPMC_URL_BASE = 'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query='
-EPMC_URL_TAIL = '&resultType=core'
-
-GRIST_URL_BASE = 'http://plus.europepmc.org/GristAPI/rest/get/query='
-GRIST_URL_TAIL = '&resultType=core'
-
-ALTMETRIC_URL_BASE = 'http://api.altmetric.com/v1/pmid/'
-# ALTMETRIC_API_KEY Loaded from config
-
-ORCID_URL_BASE = 'http://pub.orcid.org/v1.1/'
-ORCID_URL_TAIL = '/orcid-profile'
+BASEURLS = {
+  altmetric: "http://api.altmetric.com/v1/pmid/QUERY#{ALTMETRIC_API_KEY}",
+  epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resultType=core",
+  grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resultType=core",
+  orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile"
+}
 
 TEST_PMIDS = %w(
   18243253 18217840 18085873 18077465
@@ -77,10 +68,10 @@ ALTMETRIC_PRIMARY_ATTRIBUTES = {
 }
 
 ALTMETRIC_SECONDARY_ATTRIBUTES = [
-  :altmetric_similar_age_journal_3m_percentile,
-  :altmetric_one_week_score,
-  :altmetric_six_month_score,
-  :altmetric_one_year_score
+  :similar_age_journal_3m_percentile,
+  :one_week_score,
+  :six_month_score,
+  :one_year_score
 ]
 
 GRIST_ATTRIBUTES = {
@@ -105,11 +96,15 @@ ORCID_ATTRIBUTES = {
   other_name: '//other_name',
 }
 
+def create_url(identifier, type)
+  return BASEURLS[type].sub(/QUERY/, identifier)
+end
+
 def get_epmc(pmid, raw: false)
   # Add sanitisation
   pmid = pmid.to_s
   # break unless pmid =~ /\d{8}/
-  url = EPMC_URL_BASE + pmid + EPMC_URL_TAIL
+  url = create_url(pmid, :epmc)
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
   article[:pmid] = pmid
@@ -186,38 +181,39 @@ end
 
 def get_altmetric(pmid)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
-  url = ALTMETRIC_URL_BASE + pmid + ALTMETRIC_API_KEY
+  create_url(pmid, :altmetric)
   begin
   article = {}
   article[:pmid] = pmid
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
   ALTMETRIC_PRIMARY_ATTRIBUTES.each do
-        |key,value| article[("altmetric_" + key.to_s).to_sym] = altmetric_json[value]
+        |key,value| article[key.to_sym] = altmetric_json[value]
   end
   # Correct the below, ugly way of doing things
   if altmetric_json['context'] && altmetric_json['context']['similar_age_journal_3m']
-    article[:altmetric_similar_age_journal_3m_percentile] = altmetric_json['context']['similar_age_journal_3m']['pct']
+    article[:similar_age_journal_3m_percentile] = altmetric_json['context']['similar_age_journal_3m']['pct']
   else
-    article[:altmetric_similar_age_journal_3m_percentile] = nil
+    article[:similar_age_journal_3m_percentile] = nil
   end
-  article[:altmetric_one_week_score] = altmetric_json['history']['1w']
-  article[:altmetric_six_month_score] = altmetric_json['history']['6m']
-  article[:altmetric_one_year_score] = altmetric_json['history']['1y']
-  article[:altmetric_STATUS] = "SUCCESS at #{Time.now}"
-  return article # keep changing this, check it before running
+  article[:one_week_score] = altmetric_json['history']['1w']
+  article[:six_month_score] = altmetric_json['history']['6m']
+  article[:one_year_score] = altmetric_json['history']['1y']
+  article[:STATUS] = "SUCCESS at #{Time.now}"
+  return article
 
+  # Now for the error handling
   rescue OpenURI::HTTPError => e
     if e.message == '404 Not Found'
       # Blank out the primary attributes
       ALTMETRIC_PRIMARY_ATTRIBUTES.each do
-        |key,value| article[("altmetric_" + key.to_s).to_sym] = nil
+        |key,value| article[key] = nil
       end
       # Blank out the secondary attributes
       ALTMETRIC_SECONDARY_ATTRIBUTES.each do |symbol|
         article[symbol] = nil
       end
-      article[:altmetric_STATUS] = "NO ENTRY at #{Time.now}"
+      article[:STATUS] = "NO ENTRY at #{Time.now}"
       return article
     else
       raise e
@@ -225,24 +221,24 @@ def get_altmetric(pmid)
 
   rescue Errno::ETIMEDOUT
     ALTMETRIC_PRIMARY_ATTRIBUTES.each do
-        |key,value| article[("altmetric_" + key.to_s).to_sym] = nil
+        |key,value| article[key] = nil
       end
     ALTMETRIC_SECONDARY_ATTRIBUTES.each do |symbol|
       article[symbol] = nil
     end
-    article[:altmetric_STATUS] = "TIMEOUT at #{Time.now}"
+    article[:STATUS] = "TIMEOUT at #{Time.now}"
   end
 end
 
 def get_grist(grantid, raw: false)
   p = URI::Parser.new
   grantid = p.escape(grantid) # Should put this on other calls
-  url = GRIST_URL_BASE + 'gid:' + grantid + GRIST_URL_TAIL
+  create_url(grantid, :grist)
   grant = {}
   grist_xml = Nokogiri::HTML(open(url))  
   # puts "url: #{url}"
   GRIST_ATTRIBUTES.each do
-   |key,value| grant["grist_" + key.to_s] = grist_xml.xpath(value)[0].content
+   |key,value| grant[key] = grist_xml.xpath(value)[0].content
   end
 
   if raw then
@@ -260,7 +256,7 @@ def get_grist(grantid, raw: false)
 end
 
 def get_altmetric_json(pmid)
-  url = ALTMETRIC_URL_BASE + pmid + ALTMETRIC_API_KEY
+  create_url(pmid, :altmetric)
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
   return altmetric_json
@@ -269,13 +265,13 @@ end
 
 def get_orcid(id, raw: false)
   id = id[/\d{4}-\d{4}-\d{4}-\d{4}/]
-  url = ORCID_URL_BASE + id + ORCID_URL_TAIL
+  create_url(id, :orcid)
   orcid_xml = Nokogiri::HTML(open(url))
   article = {}
   ORCID_ATTRIBUTES.each do
-     |key,value| article[("orcid_" + key.to_s).to_sym] = orcid_xml.xpath(value)[0].content
+     |key,value| article[key] = orcid_xml.xpath(value)[0].content
   end
-  article[:orcid_works_count] = orcid_xml.xpath('//orcid-work').length
+  article[:works_count] = orcid_xml.xpath('//orcid-work').length
   # TODO: transform this to create one entry per work?
   if raw
     return orcid_xml
