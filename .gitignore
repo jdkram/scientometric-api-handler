@@ -5,4 +5,5 @@ test/*
 policy-project/*.csv
 input/*
 output/*
-policy-project/*
+policy-project/*.bundle
+
