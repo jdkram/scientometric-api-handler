@@ -3,3 +3,5 @@ test*.csv
 test/*
 *.zip
 policy-project/*.csv
+input/*
+output/*
