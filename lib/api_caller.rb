@@ -1,15 +1,8 @@
-# API Caller #
-
 require 'nokogiri'
 require 'open-uri'
 require 'json'
 
 require_relative '../config'
-
-################################################################
-# API CALLING
-################################################################
-# Grab that EPMC data
 
 BASEURLS = {
   altmetric: "http://api.altmetric.com/v1/pmid/QUERY#{ALTMETRIC_API_KEY}",
@@ -61,7 +54,6 @@ ALTMETRIC_PRIMARY_ATTRIBUTES = {
   cited_by_msm_count: 'cited_by_msm_count',
   cited_by_peer_review_sites_count: 'cited_by_peer_review_sites_count',
   subjects: 'subjects',
-  # similar_age_journal_3m_percentile: 'context', # Need to handle subelements somehow
   top_quotes: 'tq',
   details_url: 'details_url',
   published_on: 'published_on'
@@ -181,7 +173,8 @@ end
 
 def get_altmetric(pmid)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
-  create_url(pmid, :altmetric)
+  url = create_url(pmid, :altmetric)
+  puts url
   begin
   article = {}
   article[:pmid] = pmid
@@ -233,7 +226,7 @@ end
 def get_grist(grantid, raw: false)
   p = URI::Parser.new
   grantid = p.escape(grantid) # Should put this on other calls
-  create_url(grantid, :grist)
+  url = create_url(grantid, :grist)
   grant = {}
   grist_xml = Nokogiri::HTML(open(url))  
   # puts "url: #{url}"
@@ -256,7 +249,7 @@ def get_grist(grantid, raw: false)
 end
 
 def get_altmetric_json(pmid)
-  create_url(pmid, :altmetric)
+  url = create_url(pmid, :altmetric)
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
   return altmetric_json
@@ -265,7 +258,7 @@ end
 
 def get_orcid(id, raw: false)
   id = id[/\d{4}-\d{4}-\d{4}-\d{4}/]
-  create_url(id, :orcid)
+  url = create_url(id, :orcid)
   orcid_xml = Nokogiri::HTML(open(url))
   article = {}
   ORCID_ATTRIBUTES.each do
