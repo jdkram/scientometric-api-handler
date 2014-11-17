@@ -7,4 +7,5 @@ input/*
 output/*
 policy-project/*
 .bundle
+vcr_cassettes/
 
