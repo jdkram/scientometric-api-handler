@@ -1,0 +1,82 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=9855500&resultType=core
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - www.ebi.ac.uk
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Apache-Coyote/1.1
+      Set-Cookie:
+      - JSESSIONID=EC73AEB0A05121FCA45F7D80F522719D; Path=/europepmc
+      Content-Type:
+      - application/xml
+      Content-Length:
+      - '6743'
+      Date:
+      - Mon, 17 Nov 2014 03:46:10 GMT
+    body:
+      encoding: UTF-8
+      string: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><responseWrapper><version>3.0.1</version><hitCount>1</hitCount><request><query>9855500</query><dataSet>METADATA</dataSet><resultType>core</resultType><page>1</page><synonym>true</synonym></request><resultList><result><id>9855500</id><source>MED</source><pmid>9855500</pmid><DOI>10.1212/wnl.51.6.1546</DOI><title>Frontotemporal
+        lobar degeneration: a consensus on clinical diagnostic criteria.</title><authorString>Neary
+        D, Snowden JS, Gustafson L, Passant U, Stuss D, Black S, Freedman M, Kertesz
+        A, Robert PH, Albert M, Boone K, Miller BL, Cummings J, Benson DF.</authorString><authorList><author><fullName>Neary
+        D</fullName><lastName>Neary</lastName><initials>D</initials></author><author><fullName>Snowden
+        JS</fullName><lastName>Snowden</lastName><initials>JS</initials></author><author><fullName>Gustafson
+        L</fullName><lastName>Gustafson</lastName><initials>L</initials></author><author><fullName>Passant
+        U</fullName><lastName>Passant</lastName><initials>U</initials></author><author><fullName>Stuss
+        D</fullName><lastName>Stuss</lastName><initials>D</initials></author><author><fullName>Black
+        S</fullName><lastName>Black</lastName><initials>S</initials></author><author><fullName>Freedman
+        M</fullName><lastName>Freedman</lastName><initials>M</initials></author><author><fullName>Kertesz
+        A</fullName><lastName>Kertesz</lastName><initials>A</initials></author><author><fullName>Robert
+        PH</fullName><lastName>Robert</lastName><initials>PH</initials></author><author><fullName>Albert
+        M</fullName><lastName>Albert</lastName><initials>M</initials></author><author><fullName>Boone
+        K</fullName><lastName>Boone</lastName><initials>K</initials></author><author><fullName>Miller
+        BL</fullName><lastName>Miller</lastName><initials>BL</initials></author><author><fullName>Cummings
+        J</fullName><lastName>Cummings</lastName><initials>J</initials></author><author><fullName>Benson
+        DF</fullName><lastName>Benson</lastName><initials>DF</initials></author></authorList><journalInfo><issue>6</issue><volume>51</volume><journalIssueId>956091</journalIssueId><dateOfPublication>1998
+        Dec</dateOfPublication><monthOfPublication>12</monthOfPublication><yearOfPublication>1998</yearOfPublication><journal><title>Neurology</title><ISOAbbreviation>Neurology</ISOAbbreviation><medlineAbbreviation>Neurology</medlineAbbreviation><NLMid>0401060</NLMid><ISSN>0028-3878</ISSN><ESSN>1526-632X</ESSN></journal></journalInfo><pageInfo>1546-1554</pageInfo><abstractText>OBJECTIVE:
+        To improve clinical recognition and provide research diagnostic criteria for
+        three clinical syndromes associated with frontotemporal lobar degeneration.
+        METHODS: Consensus criteria for the three prototypic syndromes-frontotemporal
+        dementia, progressive nonfluent aphasia, and semantic dementia-were developed
+        by members of an international workshop on frontotemporal lobar degeneration.
+        These criteria build on earlier published clinical diagnostic guidelines for
+        frontotemporal dementia produced by some of the workshop members. RESULTS:
+        The consensus criteria specify core and supportive features for each of the
+        three prototypic clinical syndromes and provide broad inclusion and exclusion
+        criteria for the generic entity of frontotemporal lobar degeneration. The
+        criteria are presented in lists, and operational definitions for features
+        are provided in the text. CONCLUSIONS: The criteria ought to provide the foundation
+        for research work into the neuropsychology, neuropathology, genetics, molecular
+        biology, and epidemiology of these important clinical disorders that account
+        for a substantial proportion of cases of primary degenerative dementia occurring
+        before the age of 65 years.</abstractText><affiliation>Manchester Royal Infirmary,
+        UK.</affiliation><language>eng</language><pubModel>Print</pubModel><pubTypeList><pubType>Consensus
+        Development Conference</pubType><pubType>Journal Article</pubType><pubType>Review</pubType><pubType>Research
+        Support, Non-U.S. Gov''t</pubType><pubType>Research Support, U.S. Gov''t,
+        P.H.S.</pubType></pubTypeList><grantsList><grant><agency>Wellcome Trust</agency><orderIn>0</orderIn></grant><grant><grantId>AG
+        10123</grantId><agency>NIA NIH HHS</agency><acronym>AG</acronym><orderIn>0</orderIn></grant></grantsList><meshHeadingList><meshHeading><majorTopic_YN>N</majorTopic_YN><descriptorName>Frontal
+        Lobe</descriptorName><meshQualifierList><meshQualifier><abbreviation>PA</abbreviation><qualifierName>pathology</qualifierName><majorTopic_YN>Y</majorTopic_YN></meshQualifier></meshQualifierList></meshHeading><meshHeading><majorTopic_YN>N</majorTopic_YN><descriptorName>Temporal
+        Lobe</descriptorName><meshQualifierList><meshQualifier><abbreviation>PA</abbreviation><qualifierName>pathology</qualifierName><majorTopic_YN>Y</majorTopic_YN></meshQualifier></meshQualifierList></meshHeading><meshHeading><majorTopic_YN>N</majorTopic_YN><descriptorName>Humans</descriptorName></meshHeading><meshHeading><majorTopic_YN>N</majorTopic_YN><descriptorName>Dementia</descriptorName><meshQualifierList><meshQualifier><abbreviation>DI</abbreviation><qualifierName>diagnosis</qualifierName><majorTopic_YN>Y</majorTopic_YN></meshQualifier><meshQualifier><abbreviation>PA</abbreviation><qualifierName>pathology</qualifierName><majorTopic_YN>Y</majorTopic_YN></meshQualifier></meshQualifierList></meshHeading></meshHeadingList><subsetList><subset><code>AIM</code><name>Core
+        clinical journals</name></subset><subset><code>IM</code><name>Index Medicus</name></subset></subsetList><fullTextUrlList><fullTextUrl><availability>Free</availability><availabilityCode>F</availabilityCode><documentStyle>abs</documentStyle><site>www.neurology.org</site><url>http://intl.neurology.org/cgi/content/abstract/51/6/1546</url></fullTextUrl><fullTextUrl><availability>Subscription
+        required</availability><availabilityCode>S</availabilityCode><documentStyle>doi</documentStyle><site>DOI</site><url>http://dx.doi.org/10.1212/WNL.51.6.1546</url></fullTextUrl></fullTextUrlList><commentCorrectionList><commentCorrection><id>10496296</id><source>MED</source><reference>Neurology.
+        1999 Sep 22;53(5):1159</reference><type>Comment in</type><orderIn>1</orderIn></commentCorrection></commentCorrectionList><isOpenAccess>N</isOpenAccess><inEPMC>N</inEPMC><inPMC>N</inPMC><citedByCount>1318</citedByCount><hasReferences>N</hasReferences><hasTextMinedTerms>N</hasTextMinedTerms><hasDbCrossReferences>N</hasDbCrossReferences><hasLabsLinks>N</hasLabsLinks><hasTMAccessionNumbers>N</hasTMAccessionNumbers><dateOfCompletion>1998-12-30T00:00:00Z</dateOfCompletion><dateOfCreation>1998-12-30T00:00:00Z</dateOfCreation><dateOfRevision>2009-09-29T00:00:00+01:00</dateOfRevision><luceneScore>164.51976</luceneScore></result></resultList></responseWrapper>'
+    http_version: 
+  recorded_at: Mon, 17 Nov 2014 03:46:11 GMT
+recorded_with: VCR 2.9.3
