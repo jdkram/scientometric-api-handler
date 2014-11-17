@@ -1,6 +1,6 @@
 # http://code.tutsplus.com/articles/writing-an-api-wrapper-in-ruby-with-tdd--net-23875
 
-source https://rubygems.org
+source 'https://rubygems.org'
  
 gem 'httparty'
  
