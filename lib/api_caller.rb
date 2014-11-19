@@ -262,8 +262,8 @@ end
 def get_orcid(id, raw)
   begin
   url = create_url(id, :orcid)
-  orcid_xml = Nokogiri::HTML(open(url))
   article = {}
+  orcid_xml = Nokogiri::HTML(open(url))
   ORCID_ATTRIBUTES.each do |key,value| # USE THIS STRUCTURE FOR OTHERS
     if orcid_xml.at_xpath(value)
      article[key] = orcid_xml.at_xpath(value).content
@@ -274,10 +274,11 @@ def get_orcid(id, raw)
   article[:works_count] = orcid_xml.xpath('//orcid-work').length
   article[:STATUS] = "SUCCESS at #{Time.now}"
   return article
+   
    rescue OpenURI::HTTPError => e
     if e.message == '404 Not Found'
-      ORCID_ATTRIBUTES.each_key do
-        |key| article[key] = nil
+      ORCID_ATTRIBUTES.each do |key, value| 
+        article[key] = nil
       end
       article[:works_count] = nil
       article[:STATUS] = "NO ENTRY at #{Time.now}"

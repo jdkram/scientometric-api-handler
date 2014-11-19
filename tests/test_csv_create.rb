@@ -22,12 +22,12 @@ class TestCSVCreate < Minitest::Unit::TestCase
       csv_create(input_csv , output_csv: output_csv, api: :epmc)
       input_length = CSV.open(input_csv).readlines.size
       output_length = CSV.open(output_csv).readlines.size
-      assert_equal input_length, output_length-1
+      assert_equal input_length+1, output_length # Should be same length, plus a header row
     end
   end  
 
   def test_csv_create_rejects_bad_pmids
-    VCR.use_cassette('epmc_bad_pmids', :record => :new_episodes) do
+    VCR.use_cassette('epmc_bad_pmids') do
         output_csv = './tests/test_bad_pmids_output.csv'
         csv_create('./tests/test_bad_pmids.csv', output_csv: output_csv, api: :epmc)
         CSV.open(output_csv, 'r') do |csv|
@@ -43,7 +43,7 @@ class TestCSVCreate < Minitest::Unit::TestCase
       csv_create(input_csv, output_csv: output_csv, api: :orcid)
       input_length = CSV.open(input_csv).readlines.size
       output_length = CSV.open(output_csv).readlines.size
-      assert_equal input_length, output_length-1
+      assert_equal input_length+1, output_length
     end
   end
 

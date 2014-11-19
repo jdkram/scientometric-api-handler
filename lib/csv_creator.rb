@@ -62,7 +62,7 @@ def csv_create(input_csv, output_csv: nil, api: nil)
         next # Skip if they're bad
       end
       row = []
-      # call_api(id[0], api).each_value {|v| row << v }
+      call_api(id[0], api).each_value {|v| row << v }
       csv << row
       sleep pause
       i +=1
