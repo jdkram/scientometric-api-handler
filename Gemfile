@@ -6,10 +6,7 @@ gem 'rushover'
 gem 'nokogiri'
 gem 'json'
 gem 'smarter_csv'
- 
-group :test do
-  gem 'webmock'
-  gem 'vcr'
-  gem 'turn'
-  gem 'rake'
-end
+gem 'webmock'
+gem 'vcr'
+gem 'turn'
+gem 'rake'
