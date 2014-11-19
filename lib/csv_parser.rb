@@ -11,7 +11,7 @@ require_relative '../lib/api_caller'
 def epmc_csv_create(inputcsv, outputcsv)
   CSV.open(outputcsv, 'w') do |csv|
     headers, pmids = [], []
-    get_epmc('24737131') . each { |header, value| headers << header.to_s }
+    get_epmc('1') . each { |header, value| headers << header.to_s }
     csv << headers # Create header row
     pmids = CSV.read(inputcsv) # Input data (efficient?)
     queries_per_second = 2 # Rate limit

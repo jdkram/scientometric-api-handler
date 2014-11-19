@@ -92,7 +92,7 @@ def create_url(identifier, type)
   return BASEURLS[type].sub(/QUERY/, identifier)
 end
 
-def get_epmc(pmid, raw: false)
+def get_epmc(pmid, raw)
   # Add sanitisation
   pmid = pmid.to_s
   # break unless pmid =~ /\d{8}/
@@ -142,7 +142,11 @@ def get_epmc(pmid, raw: false)
         article[id_key] = 'N/A'
     end
   end
-  article[:abstract] = epmc_xml.at_xpath('//abstracttext').content
+  article[:abstract] = if epmc_xml.at_xpath('//abstracttext') # How can we handle there being no abstract?
+    then epmc_xml.at_xpath('//abstracttext').content
+  else
+    ''
+  end
   article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
   if raw then
     return epmc_xml
@@ -171,10 +175,9 @@ def get_epmc_citations(pmid, src: false, raw: false)
   end
 end
 
-def get_altmetric(pmid)
+def get_altmetric(pmid, raw)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
   url = create_url(pmid, :altmetric)
-  puts url
   begin
   article = {}
   article[:pmid] = pmid
@@ -223,7 +226,7 @@ def get_altmetric(pmid)
   end
 end
 
-def get_grist(grantid, raw: false)
+def get_grist(grantid, raw)
   p = URI::Parser.new
   grantid = p.escape(grantid) # Should put this on other calls
   url = create_url(grantid, :grist)
@@ -256,7 +259,7 @@ def get_altmetric_json(pmid)
   # return altmetric_response.meta # Returns the daily rate stuff
 end
 
-def get_orcid(id, raw: false)
+def get_orcid(id, raw)
   id = id[/\d{4}-\d{4}-\d{4}-\d{4}/]
   url = create_url(id, :orcid)
   orcid_xml = Nokogiri::HTML(open(url))
@@ -270,5 +273,19 @@ def get_orcid(id, raw: false)
     return orcid_xml
   else
     return article
+  end
+end
+
+def call_api(id, api, raw: false)
+  api = api.to_sym
+  case api
+  when :epmc
+    get_epmc(id, raw)
+  when :altmetric
+    get_altmetric(id, raw)
+  when :orcid
+    get_orcid(id, raw)
+  else
+    raise ArgumentError, "Not a valid API"
   end
 end

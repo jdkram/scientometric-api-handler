@@ -1,4 +1,8 @@
-# Hypothesis tester
+# Scientometric API Handler #
+
+__It's possible that I skipped over all old pmids due to this line of code:__
+
+>       next if !(pmid[0] =~ /\d{8}/) # Skip if not a valid pmid
 
 A tool for batch downloading and inspecting hypotheses from a number of [scientometric][scientometric] sources:
 
@@ -24,6 +28,10 @@ Output
     a) CSV with EPMC metadata, including grantID and grant details, Altmetric data
 
 ## TODO ##
+
+- [ ] Aim for a command line interface which takes a .csv of PMIDs as input alongside flags for each API to call
+
+> sah input_pmids.csv -ae
 
 - [ ] Look in to citations - can we pull in the complete list of citations?
 - [ ] Completely refactor
