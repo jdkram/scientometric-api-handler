@@ -40,12 +40,14 @@ class TestCheckPmid < Minitest::Unit::TestCase
       assert_equal check_id(pmid, 'epmc'), false
     end
   end
+end
+
+class TestCheckORCIDid < Minitest::Unit::TestCase
 
   CORRECT_ORCID_IDS = %w(
     0000-0002-1694-233X
     0000-0001-5109-3700
-    0000-0002-1825-0097
-  )
+    0000-0002-1825-0097)
 
   def test_accepts_correct_orcid_ids
     CORRECT_ORCID_IDS.each do |id|

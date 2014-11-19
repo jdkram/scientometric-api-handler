@@ -38,18 +38,18 @@ end
 # puts get_epmc(9855500, raw: true)
 # puts get_altmetric(pmid3, {raw: false})[:STATUS]
 
-puts Time.now.strftime('%Y-%m-%d_%H:%M')
+# puts Time.now.strftime('%Y-%m-%d_%H:%M')
 
 # epmc_guidelines_create('../test/WTCitedShortened.csv', '../test/epmc_guidelines.csv')
 
-# puts get_orcid '0000-0002-1071-298X'
+puts get_orcid '0000-0002-1071-298X', false
 # puts get_orcid ('0000-0003-0763-3954')
 # puts get_orcid '0000-0002-2464-0462'
 
 # orcid_csv_create '../test/ORCID/20140403_attributing_orcids.csv' 
 # orcid_csv_create '../test/ORCID/20140417_egrants_orcids_pmids.csv'
 
-csv_create('test.csv', api: :altmetric)
+# csv_create('test.csv', api: :altmetric)
 
 # batch_altmetric(0,0)
 
@@ -61,6 +61,7 @@ notification_message = "Task finished at #{"%02d" % t2.getlocal.hour}:#{"%02d" %
 # client = Rushover::Client.new(PUSHOVER_API_KEY)
 # client.notify(PUSHOVER_USER_KEY, notification_message, :priority => 1, :title => "Task complete!")
 
+# puts get_altmetric(pmid3, false)
 
 puts notification_message
 puts "Duration: #{t2-t1}"

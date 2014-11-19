@@ -7,6 +7,9 @@ API_LIMITS = { altmetric: 2, epmc: 2, grist: 2, orcid: 2 }
 # Convert API types to IDs
 API_ID_TYPES = { altmetric: 'pmid', epmc: 'pmid', grist: 'grant_id', orcid: 'orcid_id' }
 
+# Sample working IDs
+SAMPLE_IDS = { altmetric: '24889601', epmc: '24889601', grist: '082178', orcid: '0000-0002-6435-1825' }
+
 def time # Create time string for filenames
   Time.now.strftime('%Y%m%d_%H:%M')
 end
@@ -51,15 +54,15 @@ def csv_create(input_csv, output_csv: nil, api: nil)
   i = 0
   bad_ids = []
   CSV.open(output_csv, 'w') do |csv|
-    headers = call_api('0', api).keys
+    headers = call_api(SAMPLE_IDS[api], api).keys
     csv << headers
     ids.each do |id|
       unless check_id(id.first, api)  # Convert id from array to str
-        bad_ids << id
+        bad_ids << id[0]
         next # Skip if they're bad
       end
       row = []
-      call_api(id[0], api).each_value {|v| row << v }
+      # call_api(id[0], api).each_value {|v| row << v }
       csv << row
       sleep pause
       i +=1

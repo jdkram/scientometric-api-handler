@@ -85,7 +85,7 @@ ORCID_ATTRIBUTES = {
   given_names: '//given-names',
   family_name: '//family-name',
   credit_name: '//credit-name',
-  other_name: '//other_name',
+  # other_name: '//other_name',
 }
 
 def create_url(identifier, type)
@@ -260,19 +260,31 @@ def get_altmetric_json(pmid)
 end
 
 def get_orcid(id, raw)
-  id = id[/\d{4}-\d{4}-\d{4}-\d{4}/]
+  begin
   url = create_url(id, :orcid)
   orcid_xml = Nokogiri::HTML(open(url))
   article = {}
-  ORCID_ATTRIBUTES.each do
-     |key,value| article[key] = orcid_xml.xpath(value)[0].content
+  ORCID_ATTRIBUTES.each do |key,value| # USE THIS STRUCTURE FOR OTHERS
+    if orcid_xml.at_xpath(value)
+     article[key] = orcid_xml.at_xpath(value).content
+    else
+      article[key] = nil
+    end
   end
   article[:works_count] = orcid_xml.xpath('//orcid-work').length
-  # TODO: transform this to create one entry per work?
-  if raw
-    return orcid_xml
-  else
-    return article
+  article[:STATUS] = "SUCCESS at #{Time.now}"
+  return article
+   rescue OpenURI::HTTPError => e
+    if e.message == '404 Not Found'
+      ORCID_ATTRIBUTES.each_key do
+        |key| article[key] = nil
+      end
+      article[:works_count] = nil
+      article[:STATUS] = "NO ENTRY at #{Time.now}"
+      return article
+    else
+      raise e
+    end
   end
 end
 
@@ -289,3 +301,4 @@ def call_api(id, api, raw: false)
     raise ArgumentError, "Not a valid API"
   end
 end
+
