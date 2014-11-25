@@ -85,7 +85,7 @@ ORCID_ATTRIBUTES = {
   given_names: '//given-names',
   family_name: '//family-name',
   credit_name: '//credit-name',
-  # other_name: '//other_name',
+  other_name: '//other_name',
 }
 
 def create_url(identifier, type)
@@ -260,7 +260,6 @@ def get_altmetric_json(pmid)
 end
 
 def get_orcid(id, raw)
-  begin
   url = create_url(id, :orcid)
   article = {}
   orcid_xml = Nokogiri::HTML(open(url))
@@ -286,7 +285,14 @@ def get_orcid(id, raw)
     else
       raise e
     end
-  end
+
+    rescue Errno::ETIMEDOUT => e
+      ORCID_ATTRIBUTES.each do |key, value| 
+        article[key] = nil
+      end
+      article[:works_count] = nil
+      article[:STATUS] = "TIMEOUT at #{Time.now}"
+      return article
 end
 
 def call_api(id, api, raw: false)

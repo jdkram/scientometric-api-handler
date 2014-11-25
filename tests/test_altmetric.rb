@@ -1,5 +1,6 @@
-require_relative '../lib/api_caller'
 require 'minitest/autorun'
+
+require_relative '../lib/api_caller'
 
 class TestAltmetric < Minitest::Unit::TestCase
 

@@ -37,7 +37,9 @@ class TestCSVCreate < Minitest::Unit::TestCase
   end
 
   def test_csv_create_accepts_good_orcid_ids
-    VCR.use_cassette('orcid_good_ids', :record => :new_episodes) do
+    # Just realised why this test takes so long with fresh calls...
+    #   ... these are some of the most populated profiles around
+    VCR.use_cassette('orcid_good_ids') do
       input_csv = './tests/test_good_orcid_ids.csv'
       output_csv = './tests/test_good_orcid_ids_output.csv'
       csv_create(input_csv, output_csv: output_csv, api: :orcid)
