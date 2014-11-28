@@ -3,7 +3,7 @@ require 'csv'
 require_relative '../lib/api_caller'
 require_relative '../lib/id_checker'
 # Number of requests per second
-API_LIMITS = { altmetric: 2, epmc: 2, grist: 2, orcid: 2 }
+API_LIMITS = { altmetric: 1, epmc: 2, grist: 2, orcid: 2 }
 
 # Sample working IDs
 SAMPLE_IDS = { 

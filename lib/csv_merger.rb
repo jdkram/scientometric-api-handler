@@ -32,7 +32,7 @@ def merge_csv(master, directory)
   end
 end
 
-master = '../test/pmids/master_almetric2.csv'
-directory = '../test/pmids/'
+# master = '../test/pmids/master_almetric2.csv'
+# directory = '../test/pmids/'
 
-merge_csv(master, directory)
+# merge_csv(master, directory)
