@@ -1,9 +1,5 @@
 # Scientometric API Handler #
 
-__It's possible that I skipped over all old pmids due to this line of code:__
-
->       next if !(pmid[0] =~ /\d{8}/) # Skip if not a valid pmid
-
 A tool for batch downloading and inspecting hypotheses from a number of [scientometric][scientometric] sources:
 
 - [EuropePMC REST Web Service][EPMC_REST] - access to all publications indexed by [EuropePMC][]
@@ -14,6 +10,8 @@ PMIDs (described below) are used throughout as the original application of the c
 
 > A PMID (PubMed identifier or PubMed unique identifier) is a unique number assigned to each PubMed record. A PMID is not the same as a PMCID which is the identifier for all works published in the free-to-access PubMed Central.
 > -- <cite>[PubMed on Wikipedia](https://en.wikipedia.org/wiki/PubMed)</cite>
+
+This is one of my first projects in Ruby, so please forgive some of the crimes against Ruby in here. I'll try use classes 
 
 ## I/O ##
 
@@ -75,8 +73,14 @@ Erroring entries:
 - 20390432
 - 21073404
 
-History entries don't seem correct in some cases:
-=> {"at"=>7.25, "1d"=>0, "2d"=>0, "3d"=>0, "4d"=>0, "5d"=>0, "6d"=>0, "1w"=>0, "1m"=>0, "3m"=>0, "6m"=>0, "1y"=>0} for 10.7554/elife.00047
+__It's possible that I skipped over all old pmids due to this line of code:__
+
+>       next if !(pmid[0] =~ /\d{8}/) # Skip if not a valid pmid
+
+## Further resources / similar projects ##
+
+- [PMID to DOI converter][PMID2DOI] as used in ScholarNinja's [Importer][ScholarNinja Importer]
+- [@lodds]
 
 [EuropePMC]: http://europepmc.org/ 
 [rubocop]: https://github.com/bbatsov/rubocop
@@ -84,3 +88,5 @@ History entries don't seem correct in some cases:
 [EPMC_REST]: http://europepmc.org/RestfulWebService
 [EPMC_Grist]: http://plus.europepmc.org/GristAPI/
 [Altmetric]: http://api.altmetric.com/
+[PMID2DOI]: http://www.pmid2doi.org/
+[ScholarNinja Importer]: https://github.com/ScholarNinja/importer
