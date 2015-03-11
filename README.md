@@ -11,7 +11,20 @@ PMIDs (described below) are used throughout as the original application of the c
 > A PMID (PubMed identifier or PubMed unique identifier) is a unique number assigned to each PubMed record. A PMID is not the same as a PMCID which is the identifier for all works published in the free-to-access PubMed Central.
 > -- <cite>[PubMed on Wikipedia](https://en.wikipedia.org/wiki/PubMed)</cite>
 
-This is one of my first projects in Ruby, so please forgive some of the crimes against Ruby in here. I'll try use classes 
+This tool then calls the API with each PMID, respecting rate limits, and returns the data from that API.
+
+This is one of my first projects in Ruby, so please forgive some of the crimes against Ruby in here.
+
+# Use #
+
+Can be called via the command line. The only two necessary arguments are input .csv file of PMIDs and the API to call:
+
+    sah altmetric.csv -a altmetric
+
+The output file can be specified:
+
+    sah ~/Documents/pmids.csv -a epmc -o ~/Documents/output.csv
+
 
 ## I/O ##
 
@@ -27,19 +40,12 @@ Output
 
 ## TODO ##
 
-- [ ] Aim for a command line interface which takes a .csv of PMIDs as input alongside flags for each API to call
-
-> sah input_pmids.csv -ae
-
+- [x] Aim for a command line interface which takes a .csv of PMIDs as input alongside flags for each API to call
 - [ ] Look in to citations - can we pull in the complete list of citations?
 - [ ] Completely refactor
-    - [ ] Command line interface (in bin, read Pickaxe first)
+    - [x] Command line interface (in bin, read Pickaxe first)
 - [ ] Catch errors with URL handling
 - [ ] Raise errors if PMIDs aren't valid
-
-### Testing ###
-
-- [ ] Create exemplar output from each API to use for testing
 
 ### Sample search strings ###
 
@@ -73,14 +79,13 @@ Erroring entries:
 - 20390432
 - 21073404
 
-__It's possible that I skipped over all old pmids due to this line of code:__
+__It's possible that I skipped over all old pmids (those without 8 digits) due to this line of code:__
 
 >       next if !(pmid[0] =~ /\d{8}/) # Skip if not a valid pmid
 
 ## Further resources / similar projects ##
 
 - [PMID to DOI converter][PMID2DOI] as used in ScholarNinja's [Importer][ScholarNinja Importer]
-- [@lodds]
 
 [EuropePMC]: http://europepmc.org/ 
 [rubocop]: https://github.com/bbatsov/rubocop
