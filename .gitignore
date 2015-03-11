@@ -7,5 +7,7 @@ input/*
 output/*
 policy-project/*
 .bundle
+
+# contains API Key info
 vcr_cassettes/
 
