@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+require 'optparse' # https://github.com/sparklemotion/nokogiri/blob/master/bin/nokogiri
+require 'rushover'
+
+# require_relative '../lib/csv_creator'
+Dir["../lib/*.rb"].each {|file| require_relative file }
+options = OpenStruct.new
+
+opts = OptionParser.new do |opts|
+  opts.banner = "Scientometric API handler: grabbing data in big handfuls about publications"
+  opts.define_head "Usage: sah <input_csv> [options]"
+  opts.separator ""
+  opts.separator "Examples:"
+  opts.separator "  sah altmetric.csv -a altmetric"
+  opts.separator "  sah ~/Downloads/pmids.csv -a epmc -o ~/Downloads/output.csv "
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-a", "--api API",
+          "Pick an API before requesting data") do |api|
+    options.api = api
+  end
+
+  opts.on("-o", "--output [filename.csv]",
+          "Pick an output filename") do |file|
+    options.output_file = file
+  end
+
+  opts.on("-n", "--notify") do |n|
+    options.notify = true
+  end
+
+end
+
+opts.parse!
+
+input = ARGV.shift
+api = options.api
+output = options.output_file
+
+# p input
+# p options
+# p ARGV
+
+t1 = Time.now
+puts "Task started at #{t1.strftime('%H:%M')}"
+
+# csv_create(input, output_csv: output, api: api)
+
+t2 = Time.now
+notification_message = "Task finished at #{t2.strftime('%H:%M')}}"
+
+def notify
+  client = Rushover::Client.new(PUSHOVER_API_KEY)
+  client.notify(PUSHOVER_USER_KEY, notification_message, :priority => 1, :title => "Task complete!")
+end
+
+notify if options.notify?
+puts notification_message
+puts "Duration: #{t2-t1}"
+
+pmid1 = '20059573'
+pmid2 = '18755769'
+pmid3 = '24889601' # ID of the Facebook psych experiment study, high altmetric
+grantid1= '082178'
+pmid4 = '22440947'
