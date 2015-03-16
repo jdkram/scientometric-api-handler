@@ -45,7 +45,7 @@ class TestCSVCreate < Minitest::Unit::TestCase
       csv_create(input_csv, output_csv: output_csv, api: :orcid)
       input_length = CSV.open(input_csv).readlines.size
       output_length = CSV.open(output_csv).readlines.size
-      assert_equal input_length+1, output_length
+      assert_equal input_length+1, output_length # Should be same length, plus a header row
     end
   end
 

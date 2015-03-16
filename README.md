@@ -46,6 +46,7 @@ Output
     - [x] Command line interface (in bin, read Pickaxe first)
 - [ ] Catch errors with URL handling
 - [ ] Raise errors if PMIDs aren't valid
+- [ ] Create tests for new ORCID API integration
 
 ### Sample search strings ###
 
