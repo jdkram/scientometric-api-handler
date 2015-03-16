@@ -8,6 +8,7 @@ output/*
 policy-project/*
 .bundle
 archive/*
+README.pdf
 
 # contains API Key info
 vcr_cassettes/
