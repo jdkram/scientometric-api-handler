@@ -9,6 +9,8 @@ policy-project/*
 .bundle
 archive/*
 README.pdf
+*.sublime-project
+*.sublime-workspace
 
 # contains API Key info
 vcr_cassettes/
