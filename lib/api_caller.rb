@@ -5,7 +5,7 @@ require 'json'
 require_relative '../config'
 
 BASEURLS = {
-  altmetric: "http://api.altmetric.com/v1/pmid/QUERY#{ALTMETRIC_API_KEY}",
+  altmetric: "http://api.altmetric.com/v1/ID_TYPE/QUERY#{ALTMETRIC_API_KEY}",
   epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resultType=core",
   grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resultType=core",
   orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile"
@@ -92,6 +92,16 @@ def create_url(identifier, type)
   return BASEURLS[type].sub(/QUERY/, identifier)
 end
 
+def pmid_or_doi(identifier)
+  if identifier =~ /\// # If ID contains a slash, it's a DOI
+    return 'doi'  
+  elsif identifier =~ /\d{4,8}/
+    return 'pmid'
+  else 
+    return 'unknown_id'
+  end
+end
+
 def get_epmc(pmid, raw)
   # Add sanitisation
   pmid = pmid.to_s
@@ -175,12 +185,25 @@ def get_epmc_citations(pmid, src: false, raw: false)
   end
 end
 
-def get_altmetric(pmid, raw)
+def get_altmetric(identifier, raw)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
-  url = create_url(pmid, :altmetric)
+  url = create_url(identifier, :altmetric)
+  identifier_type = pmid_or_doi(identifier) # Returns 'pmid' or 'doi' or 'unknown_id'
+  url.sub!(/ID_TYPE/, identifier_type) # Construct URL based on correct identifier type
   begin
   article = {}
-  article[:pmid] = pmid
+  case identifier_type
+  when 'pmid'
+    article[:pmid] = identifier
+    article[:doi] = ''
+  when 'doi'
+    article[:pmid] = ''
+    article[:doi] = identifier
+  when 'unknown_id'
+    article[:pmid] = ''
+    article[:doi] = ''
+  end
+
   altmetric_response = open(url)
   altmetric_json = JSON.parse(altmetric_response.read)
   ALTMETRIC_PRIMARY_ATTRIBUTES.each do
