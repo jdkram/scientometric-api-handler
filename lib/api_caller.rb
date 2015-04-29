@@ -109,7 +109,7 @@ def get_epmc(pmid, raw)
   url = create_url(pmid, :epmc)
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
-  article[:pmid] = pmid
+  article[:pmid] = epmc_xml.at_xpath('//pmid').content
   article[:doi] = epmc_xml.at_xpath('//doi').content
   article[:title] = epmc_xml.at_xpath('//result//title').content
   article[:journal] = epmc_xml.at_xpath('//journal//title').content
@@ -128,8 +128,8 @@ def get_epmc(pmid, raw)
     agency_key = ('grant_' + n.to_s + '_agency').to_sym
     
     grant_xml = epmc_xml.xpath('//grant')[n-1].to_s
-    grantid_regex = /\<grantid\>([^<]+)\<\/grantid\>/
-    agency_regex = /\<agency\>([^<]+)\<\/agency\>/
+    grantid_regex = /\<grantid\>([^<]+)\<\/grantid\>/ # Is this line right? Two closing tags?
+    agency_regex = /\<agency\>([^<]+)\<\/agency\>/ # Is this line right? Two closing tags?
 
     grantid_match = grantid_regex.match(grant_xml)
     agency_match = agency_regex.match(grant_xml)
@@ -158,6 +158,7 @@ def get_epmc(pmid, raw)
     ''
   end
   article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
+  
   if raw then
     return epmc_xml
   else
@@ -195,13 +196,9 @@ def get_altmetric(identifier, raw)
   case identifier_type
   when 'pmid'
     article[:pmid] = identifier
-    article[:doi] = ''
   when 'doi'
-    article[:pmid] = ''
     article[:doi] = identifier
   when 'unknown_id'
-    article[:pmid] = ''
-    article[:doi] = ''
   end
 
   altmetric_response = open(url)

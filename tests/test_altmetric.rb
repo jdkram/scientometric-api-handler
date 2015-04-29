@@ -5,6 +5,7 @@ require_relative '../lib/api_caller'
 class TestAltmetric < Minitest::Unit::TestCase
 
   PMID = '24889601'
+  DOI = '10.1073/pnas.1320040111'
 
 	def test_successful_altmetric_request
     VCR.use_cassette('altmetric_success') do
@@ -20,6 +21,14 @@ class TestAltmetric < Minitest::Unit::TestCase
       article = get_altmetric('invalid_id', false) # Send it a meaningless ID
       assert_match /NO ENTRY/, article[:STATUS] # Should fail without stalling
       assert_equal nil, article[:similar_age_journal_3m_percentile] # Check hash still keys, albeit empty
+    end
+  end
+
+  def test_doi_altmetric_request
+    VCR.use_cassette('altmetric_success_doi') do
+      article = get_altmetric(DOI, false)
+      assert_match /massive-scale emotional contagion/, article[:title] # Title correct?
+      assert_match /SUCCESS/, article[:STATUS] # Great success # Send a working DOI
     end
   end
 
