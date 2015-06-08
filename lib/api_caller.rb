@@ -110,7 +110,7 @@ def get_epmc(pmid, raw)
   epmc_xml = Nokogiri::HTML(open(url))
   article = {}
   article[:pmid] = epmc_xml.at_xpath('//pmid').content
-  article[:doi] = epmc_xml.at_xpath('//doi').content
+  article[:doi] = epmc_xml.at_xpath('//doi').content unless epmc_xml.at_xpath('//doi') == nil
   article[:title] = epmc_xml.at_xpath('//result//title').content
   article[:journal] = epmc_xml.at_xpath('//journal//title').content
   authorlist = []
@@ -137,9 +137,9 @@ def get_epmc(pmid, raw)
     article[:authorstring] = epmc_xml.at_xpath('//authorstring').content
     article[:firstauthor] = authorlist[0]
     article[:lastauthor] = authorlist[-1]
-    article[:url] = epmc_xml.at_xpath('//url').content
+    article[:url] = epmc_xml.at_xpath('//url').content unless epmc_xml.at_xpath('//url') == nil
     # First affiliation we can find
-    article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content
+    article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content unless epmc_xml.at_xpath('//result/affiliation') == nil
     if agency_match then
         article[agency_key] = agency_match[1]
       else
