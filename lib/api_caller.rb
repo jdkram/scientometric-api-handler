@@ -108,6 +108,8 @@ def get_epmc(pmid, raw)
   # break unless pmid =~ /\d{8}/
   url = create_url(pmid, :epmc)
   epmc_xml = Nokogiri::HTML(open(url))
+
+  ## PARSE BASIC ARTICLE METADATA ##
   article = {}
   article[:pmid] = epmc_xml.at_xpath('//pmid').content
   article[:doi] = epmc_xml.at_xpath('//doi').content unless epmc_xml.at_xpath('//doi') == nil
@@ -121,25 +123,25 @@ def get_epmc(pmid, raw)
   epmc_xml.xpath('//pubtype').each {
     |pubtype| pubtypes << pubtype.content
   }
+  article[:abstract] = if epmc_xml.at_xpath('//abstracttext') then epmc_xml.at_xpath('//abstracttext').content else '' end
+  article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
+  article[:authorstring] = epmc_xml.at_xpath('//authorstring').content
+  article[:firstauthor] = authorlist[0]
+  article[:lastauthor] = authorlist[-1]
+  article[:url] = epmc_xml.at_xpath('//url').content unless epmc_xml.at_xpath('//url') == nil
+  # First affiliation we can find
+  article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content unless epmc_xml.at_xpath('//result/affiliation') == nil
 
-  # Gather info for up to 10 grants
+  ## PARSE GRANT METADATA ##
+  # Gather info for up to 10 grants. Not elegant.
   (1..10).each do |n|
-    id_key = ('grant_' + n.to_s + '_id').to_sym
-    agency_key = ('grant_' + n.to_s + '_agency').to_sym
-    
-    grant_xml = epmc_xml.xpath('//grant')[n-1].to_s
-    grantid_regex = /\<grantid\>([^<]+)\<\/grantid\>/ # Is this line right? Two closing tags?
-    agency_regex = /\<agency\>([^<]+)\<\/agency\>/ # Is this line right? Two closing tags?
+    id_key = ('grant_' + n.to_s + '_id').to_sym # Create a key for storage in the hash
+    agency_key = ('grant_' + n.to_s + '_agency').to_sym # Create a key for storage in the hash
+    grant_xml = epmc_xml.xpath('//grant')[n-1].to_s # Pull in the grant for this iteration
 
-    grantid_match = grantid_regex.match(grant_xml)
-    agency_match = agency_regex.match(grant_xml)
+    grantid_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant_xml) # Does it contain a grantid?
+    agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant_xml) # Does it contain an agency?
 
-    article[:authorstring] = epmc_xml.at_xpath('//authorstring').content
-    article[:firstauthor] = authorlist[0]
-    article[:lastauthor] = authorlist[-1]
-    article[:url] = epmc_xml.at_xpath('//url').content unless epmc_xml.at_xpath('//url') == nil
-    # First affiliation we can find
-    article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content unless epmc_xml.at_xpath('//result/affiliation') == nil
     if agency_match then
         article[agency_key] = agency_match[1]
       else
@@ -152,14 +154,9 @@ def get_epmc(pmid, raw)
         article[id_key] = 'N/A'
     end
   end
-  article[:abstract] = if epmc_xml.at_xpath('//abstracttext') # How can we handle there being no abstract?
-    then epmc_xml.at_xpath('//abstracttext').content
-  else
-    ''
-  end
-  article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
-  
-  if raw then
+ 
+  if raw then # Inefficient to have run all the stuff to generate article then return epmc_xml, 
+              # ... but then I don't really care as this is for testing
     return epmc_xml
   else
     return article
