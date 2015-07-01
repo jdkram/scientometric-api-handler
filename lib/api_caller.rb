@@ -111,10 +111,11 @@ def get_epmc(pmid, raw)
 
   ## PARSE BASIC ARTICLE METADATA ##
   article = {}
-  article[:pmid] = epmc_xml.at_xpath('//pmid').content
-  article[:doi] = epmc_xml.at_xpath('//doi').content unless epmc_xml.at_xpath('//doi') == nil
-  article[:title] = epmc_xml.at_xpath('//result//title').content
-  article[:journal] = epmc_xml.at_xpath('//journal//title').content
+  article[:pmid] = if epmc_xml.at_xpath('//pmid') then epmc_xml.at_xpath('//pmid').content else '' end
+  article[:doi] = if epmc_xml.at_xpath('//doi') then epmc_xml.at_xpath('//doi').content else '' end
+  article[:title] = if epmc_xml.at_xpath('//result//title') then epmc_xml.at_xpath('//result//title').content else '' end
+  article[:journal] = if epmc_xml.at_xpath('//journal//title') then epmc_xml.at_xpath('//journal//title').content else '' end
+  article[:cited_by_count] = if epmc_xml.at_xpath('//citedbycount') then epmc_xml.at_xpath('//citedbycount').content else '' end
   authorlist = []
   epmc_xml.xpath('//author//fullname').each {
     |author| authorlist << author.content
@@ -123,14 +124,30 @@ def get_epmc(pmid, raw)
   epmc_xml.xpath('//pubtype').each {
     |pubtype| pubtypes << pubtype.content
   }
+  article[:pubtypes] = if pubtypes.empty? then article[:pubtypes] = '' else article[:pubtypes] = pubtypes end
+  
+  idlist = []
+  epmc_xml.xpath('//authorid').each {
+    | authorid | idlist << authorid.content
+  }
+  article[:author_ids] = if idlist.empty? then '' else idlist end
+  
+  meshheadings = []
+  epmc_xml.xpath('//descriptorname').each {
+    |heading| meshheadings << heading.content
+  }
+  article[:mesh_headings] = if meshheadings.empty? then '' else meshheadings end
+
   article[:abstract] = if epmc_xml.at_xpath('//abstracttext') then epmc_xml.at_xpath('//abstracttext').content else '' end
-  article[:dateofcreation] = epmc_xml.at_xpath('//dateofcreation').content
-  article[:authorstring] = epmc_xml.at_xpath('//authorstring').content
+  article[:dateofcreation] = if epmc_xml.at_xpath('//dateofcreation') then epmc_xml.at_xpath('//dateofcreation').content else '' end
+  article[:authorstring] = if epmc_xml.at_xpath('//authorstring') then epmc_xml.at_xpath('//authorstring').content else '' end
   article[:firstauthor] = authorlist[0]
   article[:lastauthor] = authorlist[-1]
-  article[:url] = epmc_xml.at_xpath('//url').content unless epmc_xml.at_xpath('//url') == nil
+  article[:url] = if epmc_xml.at_xpath('//url') then epmc_xml.at_xpath('//url').content else '' end
+  
   # First affiliation we can find
-  article[:affiliation] = epmc_xml.at_xpath('//result/affiliation').content unless epmc_xml.at_xpath('//result/affiliation') == nil
+
+  article[:affiliation] = if epmc_xml.at_xpath('//result/affiliation') then epmc_xml.at_xpath('//result/affiliation').content else '' end
 
   ## PARSE GRANT METADATA ##
   # Gather info for up to 10 grants. Not elegant.
@@ -153,6 +170,21 @@ def get_epmc(pmid, raw)
       else
         article[id_key] = 'N/A'
     end
+  end
+
+  article[:hasTextMinedTerms] = if epmc_xml.at_xpath('//hastextminedterms') then epmc_xml.at_xpath('//hastextminedterms').content else '' end
+
+  ## EXAMINE DATABASE METADATA
+  if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
+    article[:hasDbCrossReferences] = true
+    dbnames = []
+    epmc_xml.xpath('//dbname').each do |dbname|
+      dbnames << dbname.content
+    end
+    article[:dbCrossReferenceList] = dbnames
+  else
+    article[:hasDbCrossReferences] = false
+    article[:dbCrossReferenceList] = ''
   end
  
   if raw then # Inefficient to have run all the stuff to generate article then return epmc_xml, 
