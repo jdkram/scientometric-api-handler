@@ -6,7 +6,7 @@ require_relative '../config'
 
 BASEURLS = {
   altmetric: "http://api.altmetric.com/v1/ID_TYPE/QUERY#{ALTMETRIC_API_KEY}",
-  epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resultType=core",
+  epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:QUERY&resultType=core",
   grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resultType=core",
   orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile"
 }
@@ -127,7 +127,7 @@ def get_epmc(pmid, raw)
   article[:pubtypes] = if pubtypes.empty? then article[:pubtypes] = '' else article[:pubtypes] = pubtypes end
   
   idlist = []
-  epmc_xml.xpath('//authorid').each {
+  epmc_xml.xpath('//authoridlist/authorid').each {
     | authorid | idlist << authorid.content
   }
   article[:author_ids] = if idlist.empty? then '' else idlist end
@@ -173,6 +173,7 @@ def get_epmc(pmid, raw)
   end
 
   article[:hasTextMinedTerms] = if epmc_xml.at_xpath('//hastextminedterms') then epmc_xml.at_xpath('//hastextminedterms').content else '' end
+  article[:hasLabsLinks] = if epmc_xml.at_xpath('//haslabslinks') then epmc_xml.at_xpath('//haslabslinks').content else '' end
 
   ## EXAMINE DATABASE METADATA
   if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
