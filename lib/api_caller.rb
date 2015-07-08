@@ -175,6 +175,19 @@ def get_epmc(pmid, raw)
   article[:hasTextMinedTerms] = if epmc_xml.at_xpath('//hastextminedterms') then epmc_xml.at_xpath('//hastextminedterms').content else '' end
   article[:hasLabsLinks] = if epmc_xml.at_xpath('//haslabslinks') then epmc_xml.at_xpath('//haslabslinks').content else '' end
 
+  if article[:hasLabsLinks] == 'Y' then
+    labs_url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/MED/PMID/labsLinks'
+    labs_url = labs_url.sub(/PMID/, pmid)
+    labs_xml = Nokogiri::HTML(open(labs_url))
+    labs_links_names = []
+    labs_xml.xpath('//name').each do |name|
+      labs_links_names << name.content
+    end
+      article[:labsLinks] = labs_links_names
+    else
+      article[:labsLinks] = ''
+    end
+
   ## EXAMINE DATABASE METADATA
   if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
     article[:hasDbCrossReferences] = true
