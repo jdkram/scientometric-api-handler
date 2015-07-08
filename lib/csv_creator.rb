@@ -44,8 +44,7 @@ def csv_create(input_csv, output_csv: nil, api: nil)
       sleep pause
       i +=1
       if i % 5 == 0
-        puts "#{i} / #{ids.length} complete. Approximately
-      #{((ids.length - i) * pause).round} seconds remain"
+        puts "#{i} / #{ids.length} complete. ~#{((ids.length - i) * pause).round + 3} seconds remain"
       end
     end
   end
