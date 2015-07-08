@@ -31,7 +31,7 @@ The output file can be specified:
 Inputs and outputs:
 Input
 
-    a) A list of PMIDs
+    a) A list of PMIDs / DOIs
     b) A list of grantIDs
 
 Output
@@ -47,42 +47,21 @@ Output
 - [ ] Catch errors with URL handling
 - [ ] Raise errors if PMIDs aren't valid
 - [ ] Create tests for new ORCID API integration
+- [ ] Refactor individual API calls to own Ruby files
+- [ ] Change EPMC to use JSON
+- [ ] Abstract method for checking if fields are part of the EPMC metadata (lots of repetition in `api_caller.rb`)
 
 ### Sample search strings ###
 
 PubMedCentral and EuropePubmedCentral and the Grant Lookup Tool are a bit of a nightmare in terms of their search syntax. Examples below:
 
+EPMC CORE SEARCH: <http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resultType=core>
+
+LABSLINKS (MED): <http://www.ebi.ac.uk/europepmc/webservices/rest/MED/24727771/labsLinks>
+
 <http://europepmc.org/GrantLookup/details.php?all=&init=&name=&title=&key=&i=&gid=082178&f%5B%5D=ACT&f%5B%5D=ARC&f%5B%5D=FWF&f%5B%5D=BBSRC&f%5B%5D=BBC&f%5B%5D=BCC&f%5B%5D=BHF&f%5B%5D=CRUK&f%5B%5D=CSO&f%5B%5D=DUK&f%5B%5D=DMT&f%5B%5D=ERC&f%5B%5D=MCCC&f%5B%5D=MRC&f%5B%5D=MNDA&f%5B%5D=MSS&f%5B%5D=MT&f%5B%5D=NC3RS&f%5B%5D=DH&f%5B%5D=PUK&f%5B%5D=PCUK&f%5B%5D=TI&f%5B%5D=WT&f%5B%5D=WCR&f%5B%5D=YCR&uid=8486&bid=3>
 
-[Nice publications](http://europepmc.org/search?query=PUB_TYPE%3A%22practice%20guideline%22%20NICE)
-
-## Scratchpad ##
-
-PMID 
-
-  1. Lookup on EPMC, get metadata including grantID
-  2. grantID lookup on GRIST - metadata for grant
-  3. lookup grantID on EPMC using string like
-    (GRANT_ID:"082178" OR GRANT_ID:"WT082178") GRANT_AGENCY:"Wellcome Trust"
-    (GRANT_ID:"082178" OR GRANT_ID:"WT082178") GRANT_AGENCY:"Wellcome Trust" AND PUB_TYPE:"practice guideline"
-
-## Error handling ##
-
-I keep encountering an error when attempting a batch:
-<http://api.altmetric.com/v1/pmid/23197817> causes issues due to there being no context data, unlike for every other entry in existence.
-
-Erroring entries:
-
-- In 003, 23197817
-- In 017, 22182802
-- In 026, 22826610
-- In 031, 23251783
-- 20390432
-- 21073404
-
-__It's possible that I skipped over all old pmids (those without 8 digits) due to this line of code:__
-
->       next if !(pmid[0] =~ /\d{8}/) # Skip if not a valid pmid
+Nice publications: <http://europepmc.org/search?query=PUB_TYPE%3A%22practice%20guideline%22%20NICE>
 
 ## Further resources / similar projects ##
 
