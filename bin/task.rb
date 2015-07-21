@@ -1,4 +1,4 @@
-Dir["../lib/*.rb"].each {|file| require_relative file }
+require_all 'lib'
 
 input = '../input/PubMed_1000_original_2014-06-15.csv'
 output = '../output/PubMed_1000_original_altmetric.csv'
