@@ -1,4 +1,6 @@
-
+require 'nokogiri'
+require 'open-uri'
+require 'json'
 
 # Wouldn't need this at all we just put everything in the hashed JSON in to an activerecord.
 ALTMETRIC_PRIMARY_ATTRIBUTES = {
