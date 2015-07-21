@@ -26,13 +26,20 @@ ALTMETRIC_PRIMARY_ATTRIBUTES = {
   cited_by_policies_count: 'cited_by_policies_count',
   cited_by_msm_count: 'cited_by_msm_count',
   cited_by_peer_review_sites_count: 'cited_by_peer_review_sites_count',
+  cited_by_wikipedia_count: 'cited_by_wikipedia_count',
+  cited_by_linkedin_count: 'cited_by_linkedin_count',
+  cited_by_f1000_count: 'cited_by_f1000_count', # Don't know about this
+  cited_by_weibo_count: 'cited_by_weibo_count',
+  cited_by_rdts_count: 'cited_by_rdts_count',
+  cited_by_rh_count: 'cited_by_rh_count',
   subjects: 'subjects',
   top_quotes: 'tq',
   details_url: 'details_url',
   published_on: 'published_on'
 }
 
-ALTMETRIC_SECONDARY_ATTRIBUTES = [
+ALTMETRIC_SECONDARY_ATTRIBUTES = [ 
+# Update this with the 2nd level attributes (2 deep)
   :similar_age_journal_3m_percentile,
   :one_week_score,
   :six_month_score,
@@ -42,7 +49,7 @@ ALTMETRIC_SECONDARY_ATTRIBUTES = [
 def get_altmetric(identifier, raw)
   # http://api.altmetric.com/docs/call_fetch.html for fuller details?
   url = create_url(identifier, :altmetric)
-  identifier_type = pmid_or_doi(identifier) # Returns 'pmid' or 'doi' or 'unknown_id'
+  identifier_type = classify_id(identifier) # Returns 'pmid' or 'doi' or 'unknown_id'
   url.sub!(/ID_TYPE/, identifier_type) # Construct URL based on correct identifier type
   begin
   article = {}
