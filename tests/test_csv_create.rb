@@ -16,7 +16,7 @@ class TestCSVCreate < Minitest::Unit::TestCase
   end
   
   def test_csv_create_accepts_good_pmids
-    VCR.use_cassette('epmc_good_pmids') do
+    VCR.use_cassette('epmc_good_pmids', :record => :new_episodes) do
       input_csv = './tests/test_good_pmids.csv'
       output_csv = './tests/test_good_pmids_output.csv'
       csv_create(input_csv , output_csv: output_csv, api: :epmc)
@@ -27,7 +27,7 @@ class TestCSVCreate < Minitest::Unit::TestCase
   end  
 
   def test_csv_create_rejects_bad_pmids
-    VCR.use_cassette('epmc_bad_pmids') do
+    VCR.use_cassette('epmc_bad_pmids', :record => :new_episodes) do
         output_csv = './tests/test_bad_pmids_output.csv'
         csv_create('./tests/test_bad_pmids.csv', output_csv: output_csv, api: :epmc)
         CSV.open(output_csv, 'r') do |csv|

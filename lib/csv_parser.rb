@@ -1,6 +1,6 @@
 require 'csv'
 
-require_relative '../lib/api_caller'
+require_relative '../lib/api_handler'
 
 ################################################################
 # CSV PARSING
