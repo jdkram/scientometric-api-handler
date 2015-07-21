@@ -99,30 +99,6 @@ def get_altmetric(identifier, raw)
   end
 end
 
-def get_grist(grantid, raw)
-  p = URI::Parser.new
-  grantid = p.escape(grantid) # Should put this on other calls
-  url = create_url(grantid, :grist)
-  grant = {}
-  grist_xml = Nokogiri::HTML(open(url))  
-  # puts "url: #{url}"
-  GRIST_ATTRIBUTES.each do
-   |key,value| grant[key] = grist_xml.xpath(value)[0].content
-  end
-
-  if raw then
-    return grist_xml
-  else
-    return grant
-  end
-
-  rescue OpenURI::HTTPError => e
-  if e.message == '404 Not Found'
-    puts '404 error!'
-  else
-    raise e
-  end
-end
 
 def get_altmetric_json(pmid)
   url = create_url(pmid, :altmetric)
