@@ -14,15 +14,19 @@ BASEURLS = {
 }
 
 def create_url(identifier, type)
-  return BASEURLS[type].sub(/QUERY/, identifier)
+  url = BASEURLS[type].sub(/QUERY/, identifier)
+  id_type = classify_id(identifier)
+  return url.sub(/ID_TYPE/, id_type)
 end
 
-def pmid_or_doi(identifier)
+def classify_id(identifier)
   if identifier =~ /\// # If ID contains a slash, it's a DOI
     return 'doi'  
   elsif identifier =~ /\d{4,8}/
     return 'pmid'
-  else 
+  elsif identifier =~ /\d{4}-\d{4}-\d{4}-\d{3}(\d|X)/
+    return 'orcid'
+  else
     return 'unknown_id'
   end
 end
