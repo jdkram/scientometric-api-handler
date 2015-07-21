@@ -14,7 +14,7 @@ SAMPLE_IDS = {
 }
 
 def time # Create time string for filenames
-  Time.now.strftime('%Y%m%d_%H:%M')
+  Time.now.strftime('%Y%m%d_%H%M')
 end
 
 def read_csv(input_csv)
