@@ -190,14 +190,14 @@ def get_epmc(pmid, raw)
 
   ## EXAMINE DATABASE METADATA
   if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
-    article[:hasDbCrossReferences] = true
+    article[:hasDbCrossReferences] = 'Y'
     dbnames = []
     epmc_xml.xpath('//dbname').each do |dbname|
       dbnames << dbname.content
     end
     article[:dbCrossReferenceList] = dbnames
   else
-    article[:hasDbCrossReferences] = false
+    article[:hasDbCrossReferences] = 'N'
     article[:dbCrossReferenceList] = ''
   end
  
