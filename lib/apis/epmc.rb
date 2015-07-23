@@ -12,6 +12,15 @@ GRIST_ATTRIBUTES = {
   grantholdertitle: '//person//title'
 }
 
+def get_xpath(xml,path)
+  path = path.downcase
+  if xml.at_xpath(path) then
+    xml.at_xpath.content
+  else
+    ''
+  end
+end
+
 def get_epmc(pmid, raw)
   # Add sanitisation
   pmid = pmid.to_s
@@ -21,15 +30,12 @@ def get_epmc(pmid, raw)
 
   ## PARSE BASIC ARTICLE METADATA ##
   article = {}
-  article[:pmid] = if epmc_xml.at_xpath('//pmid') then epmc_xml.at_xpath('//pmid').content else '' end
-  article[:doi] = if epmc_xml.at_xpath('//doi') then epmc_xml.at_xpath('//doi').content else '' end
-  article[:title] = if epmc_xml.at_xpath('//result//title') then epmc_xml.at_xpath('//result//title').content else '' end
-  article[:journal] = if epmc_xml.at_xpath('//journal//title') then epmc_xml.at_xpath('//journal//title').content else '' end
-  article[:cited_by_count] = if epmc_xml.at_xpath('//citedbycount') then epmc_xml.at_xpath('//citedbycount').content else '' end
+  article[:pmid] = get_xpath(epmc_xml,'//pmid')
+  article[:doi] =  get_xpath(epmc_xml,'//doi')
+  article[:title] = get_xpath(epmc_xml,'//result//title')
+  article[:journal] = get_xpath(epmc_xml,'//journal//title')
+  article[:cited_by_count] = get_xpath(epmc_xml,'//citedbycount')
   authorlist = []
-  epmc_xml.xpath('//author//fullname').each {
-    |author| authorlist << author.content
-  }
   pubtypes = []
   epmc_xml.xpath('//pubtype').each {
     |pubtype| pubtypes << pubtype.content
@@ -48,16 +54,19 @@ def get_epmc(pmid, raw)
   }
   article[:mesh_headings] = if meshheadings.empty? then '' else meshheadings end
 
-  article[:abstract] = if epmc_xml.at_xpath('//abstracttext') then epmc_xml.at_xpath('//abstracttext').content else '' end
-  article[:dateofcreation] = if epmc_xml.at_xpath('//dateofcreation') then epmc_xml.at_xpath('//dateofcreation').content else '' end
-  article[:authorstring] = if epmc_xml.at_xpath('//authorstring') then epmc_xml.at_xpath('//authorstring').content else '' end
+  article[:abstract] = get_xpath(epmc_xml,'//abstracttext')
+  article[:dateofcreation] = get_xpath(epmc_xml,'//dateofcreation')
+  article[:authorstring] = get_xpath(epmc_xml,'//authorstring')
+  epmc_xml.xpath('//author//fullname').each {
+    |author| authorlist << author.content
+  }
   article[:firstauthor] = authorlist[0]
   article[:lastauthor] = authorlist[-1]
   article[:url] = if epmc_xml.at_xpath('//url') then epmc_xml.at_xpath('//url').content else '' end
   
   # First affiliation we can find
 
-  article[:affiliation] = if epmc_xml.at_xpath('//result/affiliation') then epmc_xml.at_xpath('//result/affiliation').content else '' end
+  article[:affiliation] = get_xpath(epmc_xml,'//result/affiliation')
 
   ## PARSE GRANT METADATA ##
   # Gather info for up to 10 grants. Not elegant.
@@ -82,8 +91,8 @@ def get_epmc(pmid, raw)
     end
   end
 
-  article[:hasTextMinedTerms] = if epmc_xml.at_xpath('//hastextminedterms') then epmc_xml.at_xpath('//hastextminedterms').content else '' end
-  article[:hasLabsLinks] = if epmc_xml.at_xpath('//haslabslinks') then epmc_xml.at_xpath('//haslabslinks').content else '' end
+  article[:hasTextMinedTerms] = get_xpath(epmc_xml,'//hastextminedterms')
+  article[:hasLabsLinks] = get_xpath(epmc_xml,'//haslabslinks')
 
   if article[:hasLabsLinks] == 'Y' then
     labs_url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/MED/PMID/labsLinks'
