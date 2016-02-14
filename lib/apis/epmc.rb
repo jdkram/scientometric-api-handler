@@ -61,6 +61,7 @@ def get_epmc(pmid, raw)
 
   ## PARSE GRANT METADATA ##
   # Gather info for up to 10 grants. Not elegant.
+  article[:number_of_grants] = epmc_xml.xpath('//grant').length
   (1..10).each do |n|
     id_key = ('grant_' + n.to_s + '_id').to_sym # Create a key for storage in the hash
     agency_key = ('grant_' + n.to_s + '_agency').to_sym # Create a key for storage in the hash
@@ -72,13 +73,13 @@ def get_epmc(pmid, raw)
     if agency_match then
         article[agency_key] = agency_match[1]
       else
-        article[agency_key] = 'N/A'
+        article[agency_key] = ''
     end
 
     if grantid_match then
         article[id_key] = grantid_match[1]
       else
-        article[id_key] = 'N/A'
+        article[id_key] = ''
     end
   end
 
