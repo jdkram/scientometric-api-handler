@@ -8,8 +8,8 @@ require_all 'lib' # Require everything in current directory
 
 BASEURLS = {
   altmetric: "http://api.altmetric.com/v1/ID_TYPE/QUERY#{ALTMETRIC_API_KEY}",
-  epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:QUERY&resultType=core",
-  grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resultType=core",
+  epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:QUERY&resulttype=core",
+  grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resulttype=core",
   orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile"
 }
 

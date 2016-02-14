@@ -7,7 +7,7 @@ require_relative './vcr_setup'
 class TestEPMC < Minitest::Unit::TestCase
 
   PMID = '9855500'
-  SUCCESSFUL_EPMC_URL = 'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:9855500&resultType=core'
+  SUCCESSFUL_EPMC_URL = 'http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:9855500&resulttype=core'
 	
   def test_url_creation # Are we creating the URLs correctly?
     url = create_url(PMID, :epmc)
