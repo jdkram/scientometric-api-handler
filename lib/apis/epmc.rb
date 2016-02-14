@@ -2,15 +2,6 @@ require 'nokogiri'
 require 'open-uri'
 require 'json'
 
-GRIST_ATTRIBUTES = {
-  grantid: '//grant//id',
-  grantfundrefid: '//grant//fundrefid',
-  grantfunder: '//grant//funder',
-  granttitle: '//grant//title',
-  grantholdername: '//person//familyname',
-  grantholderinitials: '//person//initials',
-  grantholdertitle: '//person//title'
-}
 
 def get_xpath(xml,path)
   path = path.downcase
@@ -148,8 +139,26 @@ def get_epmc_citations(pmid, src: false, raw: false)
   end
 end
 
+GRIST_ATTRIBUTES = {
+  grantID: '//grant//id',
+  grantFundrefID: '//grant//fundrefid',
+  grantFunder: '//grant//funder',
+  grantTitle: '//grant//title',
+  grantAbstract: '//grant//abstract',
+  grantType: '//grant/type',
+  grantStream: '//grant/stream',
+  grantholderName: '//person//familyname',
+  grantholderInitials: '//person//initials',
+  grantholderTitle: '//person//title',
+  grantholderOrcid: '//person//alias',
+  grantStartDate: '//grant//startdate',
+  grantEndDate: '//grant//enddate',
+  grantInstitutionName: '//institution//name'
+}
+# Example URL for GRIST schema:
+# http://plus.europepmc.org/GristAPI/rest/get/query=gid:200347&resultType=core
 
-def get_grist(grantid, raw)
+def get_grist(grantid, raw: false)
   p = URI::Parser.new
   grantid = p.escape(grantid) # Should put this on other calls
   url = create_url(grantid, :grist)
@@ -157,7 +166,7 @@ def get_grist(grantid, raw)
   grist_xml = Nokogiri::HTML(open(url))  
   # puts "url: #{url}"
   GRIST_ATTRIBUTES.each do
-   |key,value| grant[key] = grist_xml.xpath(value)[0].content
+   |key,path| grant[key] = get_xpath(grist_xml,path)
   end
 
   if raw then
