@@ -31,6 +31,7 @@ def csv_create(input_csv, output_csv: nil, api: nil)
   i = 0
   bad_ids = []
   CSV.open(output_csv, 'w') do |csv|
+    # Use a sample known ID to create headers
     headers = call_api(SAMPLE_IDS[api], api).keys
     csv << headers
     ids.each do |id|

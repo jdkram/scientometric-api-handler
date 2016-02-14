@@ -15,7 +15,7 @@ GRIST_ATTRIBUTES = {
 def get_xpath(xml,path)
   path = path.downcase
   if xml.at_xpath(path) then
-    xml.at_xpath.content
+    xml.at_xpath(path).content
   else
     ''
   end
