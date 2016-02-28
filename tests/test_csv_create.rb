@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require 'vcr'
 require 'csv'
 
-require_relative '../lib/csv_creator'
 require_relative './vcr_setup'
 
 class TestCSVCreate < Minitest::Unit::TestCase

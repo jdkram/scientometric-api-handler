@@ -1,7 +1,9 @@
 require 'minitest/autorun'
 require 'vcr'
+require 'require_all'
 
-require_relative '../lib/api_handler'
+require_all 'lib'
+
 require_relative './vcr_setup'
 
 class TestEPMC < Minitest::Unit::TestCase

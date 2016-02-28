@@ -1,6 +1,5 @@
 require 'minitest/autorun'
-
-require_relative '../lib/api_handler'
+require_relative './vcr_setup'
 
 class TestPMIDorDOI < Minitest::Unit::TestCase
 

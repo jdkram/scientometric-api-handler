@@ -94,11 +94,11 @@ def csv_create(input_csv, output_csv: nil, api: nil)
     # Use a sample known ID to create headers
     headers = call_api(SAMPLE_IDS[api], api).keys
     csv << headers
-    ids.shift unless check_id(ids[0], api) # Remove 'pmids' header
+    ids.shift if check_id(ids[0], api) # Remove 'pmids' header
     ids.each do |id|
       unless check_id(id.first, api)  # Convert id from arr to str
         bad_ids << id[0]
-        puts "Skipping invalid ID: #{id[0]}"
+        # puts "Skipping invalid ID: #{id[0]}"
         next # Skip if they're bad
       end
       row = []

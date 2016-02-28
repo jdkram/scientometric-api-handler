@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 
-require_relative '../lib/csv_creator'
+require_relative './vcr_setup'
 
 class TestCheckPmid < Minitest::Unit::TestCase
 
