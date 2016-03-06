@@ -1,5 +1,7 @@
 require 'csv'
 require 'smarter_csv'
+require 'colorize'
+
 require_relative '../lib/api_handler'
 require_relative '../lib/id_checker'
 
@@ -84,34 +86,38 @@ end
 def csv_create(input_csv, output_csv: nil, api: nil)
   raise ArgumentError, "API not specified", caller[1..-1] if api.nil?
   raise ArgumentError, "Not a CSV file", caller[1..-1] unless input_csv =~ /\.csv/
+  begin
   api = api.to_sym
   pause = 1.0 / API_LIMITS[api]
   output_csv ||= input_csv.sub(/.csv/, "_output.csv")
   ids = read_csv(input_csv)
-  i = 0
   bad_ids = []
-  CSV.open(output_csv, 'w') do |csv|
-    # Use a sample known ID to create headers
-    headers = call_api(SAMPLE_IDS[api], api).keys
-    csv << headers
-    ids.shift if check_id(ids[0], api) # Remove 'pmids' header
-    ids.each do |id|
-      unless check_id(id.first, api)  # Convert id from arr to str
-        bad_ids << id[0]
-        # puts "Skipping invalid ID: #{id[0]}"
-        next # Skip if they're bad
-      end
-      row = []
-      call_api(id[0], api).each_value {|v| row << v }
-      csv << row
-      sleep pause
-      i +=1
-      if i % 25 == 0
-        # 0.38 is the average time to get a response from EPMC, write to CSV
-        # Should pull in average API response times to this
-        puts "#{i} / #{ids.length} complete. ~#{((ids.length - i) * (0.38 + pause)).round} seconds remain"
+    CSV.open(output_csv, 'w') do |csv|
+      # Use a sample known ID to create headers
+      headers = call_api(SAMPLE_IDS[api], api).keys
+      csv << headers
+      ids.shift unless check_id(ids[0], api) # Remove 'pmids' header
+      ids.each_with_index do |id, i|
+        unless check_id(id.first, api)  # Convert id from arr to str
+          bad_ids << id[0]
+          # puts "Skipping invalid ID: #{id[0]}"
+          next # Skip if they're bad
+        end
+        row = []
+        call_api(id[0], api).each_value {|v| row << v }
+        csv << row
+        sleep pause
+        if i == 0 || (i % 25 == 0 && i != ids.length)
+          # 0.38 is the average time to get a response from EPMC, write to CSV
+          # Should pull in average API response times to this
+          puts "  #{i} / #{ids.length} complete. ~#{((ids.length - i) * (0.38 + pause)).round} seconds remain"
+        end
       end
     end
+      rescue Interrupt => i
+      File.delete(output_csv)
+      puts "\n✘ Deleted partial output CSV: #{output_csv}\n".colorize(:red)
+      raise Interrupt, "User terminated run."
   end
   puts "Invalid IDs: #{bad_ids}" unless bad_ids.length == 0
 end
@@ -121,18 +127,18 @@ end
 def process_split_csvs(split_csv_directory, api)
   files = Dir.entries(split_csv_directory)
   files.select! { |file| file =~ /\w+[\d]{3}.csv/ }
-  puts files
+  puts "Processing #{files[0..3]} and #{files.length-3} more"
   files.each do |file|
     output_file = file.sub(/.csv/, "_output.csv")
       output_file_full_name = split_csv_directory + '/' + output_file
       input_file_full_name = split_csv_directory + '/' + file
-    if File.file?(output_file_full_name)
-      puts "#{output_file} already created, skipping..."
-    else
-      puts "Processing #{file}..."
-      # create full paths
-      csv_create(input_file_full_name, output_csv: output_file_full_name, api: api)
-      puts "#{file} completed, output saved to #{output_file}"
+      if File.file?(output_file_full_name)
+        puts "#{output_file} already created, skipping...".colorize(:yellow)
+      else
+        puts "Processing #{file}..."
+        # create full paths
+        csv_create(input_file_full_name, output_csv: output_file_full_name, api: api)
+        puts "#{file} completed, output saved to #{output_file}".colorize(:green)
+      end
     end
-  end
 end

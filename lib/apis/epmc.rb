@@ -62,26 +62,56 @@ def get_epmc(pmid, raw)
   ## PARSE GRANT METADATA ##
   # Gather info for up to 10 grants. Not elegant.
   article[:number_of_grants] = epmc_xml.xpath('//grant').length
-  (1..10).each do |n|
-    id_key = ('grant_' + n.to_s + '_id').to_sym # Create a key for storage in the hash
-    agency_key = ('grant_' + n.to_s + '_agency').to_sym # Create a key for storage in the hash
-    grant_xml = epmc_xml.xpath('//grant')[n-1].to_s # Pull in the grant for this iteration
-
-    grantid_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant_xml) # Does it contain a grantid?
-    agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant_xml) # Does it contain an agency?
-
+  article[:all_grants] = []
+  article[:WT_grants] = []
+  article[:WT_six_digit_grants] = []
+  epmc_xml.xpath('//grant').each do |grant|  
+    grant = grant.to_s
+    grant_id_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant)
+    agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant)
+    # If we have a funder...
     if agency_match then
-        article[agency_key] = agency_match[1]
+      agency = agency_match[1]
+      # If we have a grant...
+      if grant_id_match then
+        grant_id = grant_id_match[1]
+        str = "#{agency}: #{grant_id}"
+        # Special treatment for WT grants
+        if agency == 'Wellcome Trust'
+          article[:WT_grants] << grant_id
+          six_digit_grant_match = /^(WT)?(\d{4,6})/.match(grant_id)
+          if six_digit_grant_match
+            article[:WT_six_digit_grants] << six_digit_grant_match[2]
+          end
+        end
       else
-        article[agency_key] = ''
-    end
-
-    if grantid_match then
-        article[id_key] = grantid_match[1]
-      else
-        article[id_key] = ''
+        # No grant num, but funder
+        str = "#{agency_match[1]}: N/A"
+      end
+      article[:all_grants] << str
     end
   end
+
+  # (1..10).each do |n|
+  #   id_key = ('grant_' + n.to_s + '_id').to_sym # Create a key for storage in the hash
+  #   agency_key = ('grant_' + n.to_s + '_agency').to_sym # Create a key for storage in the hash
+  #   grant_xml = epmc_xml.xpath('//grant')[n-1].to_s # Pull in the grant for this iteration
+
+  #   grantid_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant_xml) # Does it contain a grantid?
+  #   agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant_xml) # Does it contain an agency?
+
+  #   if agency_match then
+  #       article[agency_key] = agency_match[1]
+  #     else
+  #       article[agency_key] = ''
+  #   end
+
+  #   if grantid_match then
+  #       article[id_key] = grantid_match[1]
+  #     else
+  #       article[id_key] = ''
+  #   end
+  # end
 
   article[:hasTextMinedTerms] = get_xpath(epmc_xml,'//hastextminedterms')
   article[:hasLabsLinks] = get_xpath(epmc_xml,'//haslabslinks')
