@@ -57,10 +57,17 @@ def get_epmc(pmid, raw)
   
   # First affiliation we can find
 
-  article[:affiliation] = get_xpath(epmc_xml,'//result/affiliation')
-
+  article[:affiliations] = []
+  epmc_xml.xpath('//author//affiliation').each do |affiliation|
+    affiliation = affiliation.to_s
+    affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(affiliation)
+    if affiliation_match
+      # puts "adding affiliation: #{affiliation_match[1]}"
+      article[:affiliations] << affiliation_match[1] 
+    end
+  end
+  article[:affiliations].uniq!
   ## PARSE GRANT METADATA ##
-  # Gather info for up to 10 grants. Not elegant.
   article[:number_of_grants] = epmc_xml.xpath('//grant').length
   article[:all_grants] = []
   article[:WT_grants] = []
@@ -79,9 +86,11 @@ def get_epmc(pmid, raw)
         # Special treatment for WT grants
         if agency == 'Wellcome Trust'
           article[:WT_grants] << grant_id
-          six_digit_grant_match = /^(WT)?(\d{4,6})/.match(grant_id)
+          # Could be more specific than this, but lots of variants 
+          # e.g. WT 087535MA, 096822/Z/11/Z
+          six_digit_grant_match = /(\d{6})/.match(grant_id)
           if six_digit_grant_match
-            article[:WT_six_digit_grants] << six_digit_grant_match[2]
+            article[:WT_six_digit_grants] << six_digit_grant_match[1]
           end
         end
       else
@@ -90,28 +99,8 @@ def get_epmc(pmid, raw)
       end
       article[:all_grants] << str
     end
+    article[:WT_six_digit_grants].uniq!
   end
-
-  # (1..10).each do |n|
-  #   id_key = ('grant_' + n.to_s + '_id').to_sym # Create a key for storage in the hash
-  #   agency_key = ('grant_' + n.to_s + '_agency').to_sym # Create a key for storage in the hash
-  #   grant_xml = epmc_xml.xpath('//grant')[n-1].to_s # Pull in the grant for this iteration
-
-  #   grantid_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant_xml) # Does it contain a grantid?
-  #   agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant_xml) # Does it contain an agency?
-
-  #   if agency_match then
-  #       article[agency_key] = agency_match[1]
-  #     else
-  #       article[agency_key] = ''
-  #   end
-
-  #   if grantid_match then
-  #       article[id_key] = grantid_match[1]
-  #     else
-  #       article[id_key] = ''
-  #   end
-  # end
 
   article[:hasTextMinedTerms] = get_xpath(epmc_xml,'//hastextminedterms')
   article[:hasLabsLinks] = get_xpath(epmc_xml,'//haslabslinks')

@@ -55,6 +55,7 @@ def merge_csv(master, directory)
       end
     end
   end
+  puts "Merged files in #{directory} to #{master}".colorize(:green)
 end
 
 # master = '../test/pmids/master_almetric2.csv'
@@ -118,6 +119,12 @@ def csv_create(input_csv, output_csv: nil, api: nil)
       File.delete(output_csv)
       puts "\n✘ Deleted partial output CSV: #{output_csv}\n".colorize(:red)
       raise Interrupt, "User terminated run."
+      rescue OpenURI::HTTPError => e
+      if e.message == '502 Proxy Error'
+      puts "\n✘ Connection dropped, deleted partial output CSV: #{output_csv}\n".colorize(:red)
+      else
+        raise e
+      end
   end
   puts "Invalid IDs: #{bad_ids}" unless bad_ids.length == 0
 end
@@ -127,7 +134,7 @@ end
 def process_split_csvs(split_csv_directory, api)
   files = Dir.entries(split_csv_directory)
   files.select! { |file| file =~ /\w+[\d]{3}.csv/ }
-  puts "Processing #{files[0..3]} and #{files.length-3} more"
+  puts "Processing #{files[0..3]} and #{files.length-4} more via #{api}"
   files.each do |file|
     output_file = file.sub(/.csv/, "_output.csv")
       output_file_full_name = split_csv_directory + '/' + output_file
