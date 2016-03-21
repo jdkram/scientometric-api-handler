@@ -140,13 +140,25 @@ def process_split_csvs(split_csv_directory, api)
     output_file = file.sub(/.csv/, "_output.csv")
       output_file_full_name = split_csv_directory + '/' + output_file
       input_file_full_name = split_csv_directory + '/' + file
+      skipped_files = []
       if File.file?(output_file_full_name)
-        puts "#{output_file} already created, skipping...".colorize(:yellow)
+        skipped_files << "#{output_file} already created, skipping...".colorize(:yellow)
       else
+        if skipped_files.length > 1
+          puts "Skipped #{skipped_files[0]} - #{skipped_files[-1]}".colorize(:yellow)
+          skipped_files.clear
+        elsif skipped_files.length == 1
+          puts "Skipped #{skipped_files[0]}".colorize(:yellow)
+          skipped_files.clear
+        end
         puts "Processing #{file}..."
+
         # create full paths
         csv_create(input_file_full_name, output_csv: output_file_full_name, api: api)
         puts "#{file} completed, output saved to #{output_file}".colorize(:green)
+      end
+      if skipped_files.length > 0 # Check for any remaining skipped files after the last csv_create
+        puts "Skipped #{skipped_files[0]} - #{skipped_files[-1]}".colorize(:yellow)
       end
     end
 end
