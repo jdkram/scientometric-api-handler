@@ -49,25 +49,42 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
   article[:abstract] = get_xpath(epmc_xml,'//abstracttext')
   article[:dateofcreation] = get_xpath(epmc_xml,'//dateofcreation')
   article[:authorstring] = get_xpath(epmc_xml,'//authorstring')
-  epmc_xml.xpath('//author//fullname').each {
-    |author| authorlist << author.content
-  }
+  epmc_xml.xpath('//author//fullname').each do |author|  
+    authorlist << author.content
+  end
+  
   article[:firstauthor] = authorlist[0]
+  first_author_xml = epmc_xml.xpath('//author').first.to_s 
+  firstauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(first_author_xml)
+  if firstauthor_affiliation_match
+    article[:firstauthor_affiliation] = firstauthor_affiliation_match[1]
+  else
+    article[:firstauthor_affiliation] = ''
+  end
+
   article[:lastauthor] = authorlist[-1]
+  last_author_xml = epmc_xml.xpath('//author').last.to_s
+  lastauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(first_author_xml)
+  if lastauthor_affiliation_match
+    article[:lastauthor_affiliation] = lastauthor_affiliation_match[1] 
+    else
+    article[:lastauthor_affiliation] = ''
+  end
+
   article[:url] = if epmc_xml.at_xpath('//url') then epmc_xml.at_xpath('//url').content else '' end
   
-  # First affiliation we can find
-
-  article[:affiliations] = []
+  
+  article[:author_affiliations] = []
   epmc_xml.xpath('//author//affiliation').each do |affiliation|
     affiliation = affiliation.to_s
     affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(affiliation)
     if affiliation_match
       # puts "adding affiliation: #{affiliation_match[1]}"
-      article[:affiliations] << affiliation_match[1] 
+      article[:author_affiliations] << affiliation_match[1] 
     end
   end
-  article[:affiliations].uniq!
+  article[:author_affiliations].uniq!
+
   ## PARSE GRANT METADATA ##
   article[:number_of_grants] = epmc_xml.xpath('//grant').length
   article[:all_grants] = []
