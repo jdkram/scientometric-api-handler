@@ -137,19 +137,19 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
         article[:labsLinks] = ''
     end
 
-    ## EXAMINE DATABASE METADATA
-    if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
-      article[:hasDbCrossReferences] = 'Y'
-      dbnames = []
-      epmc_xml.xpath('//dbname').each do |dbname|
-        dbnames << dbname.content
-      end
-      article[:dbCrossReferenceList] = dbnames
-    else
-      article[:hasDbCrossReferences] = 'N'
-      article[:dbCrossReferenceList] = ''
+  ## EXAMINE DATABASE METADATA
+  if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
+    article[:hasDbCrossReferences] = 'Y'
+    dbnames = []
+    epmc_xml.xpath('//dbname').each do |dbname|
+      dbnames << dbname.content
     end
+    article[:dbCrossReferenceList] = dbnames
+  else
+    article[:hasDbCrossReferences] = 'N'
+    article[:dbCrossReferenceList] = ''
   end
+end
 
   if raw then # Inefficient to have run all the stuff to generate article then return epmc_xml, 
               # ... but then I don't really care as this is for testing
