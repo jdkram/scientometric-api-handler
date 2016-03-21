@@ -6,28 +6,29 @@ require 'json'
 def get_xpath(xml,path)
   path = path.downcase
   if xml.at_xpath(path) then
-    xml.at_xpath(path).content
+    return xml.at_xpath(path).content
   else
-    ''
+    return ''
   end
 end
 
-def get_epmc(pmid, raw)
+def get_epmc(pmid: , raw: false, follow_labslinks: true)
   # Add sanitisation
   pmid = pmid.to_s
-  # break unless pmid =~ /\d{8}/
   url = create_url(pmid, :epmc)
   epmc_xml = Nokogiri::HTML(open(url))
+  epmc_xml = epmc_xml.xpath('//result')
 
   ## PARSE BASIC ARTICLE METADATA ##
   article = {}
   article[:pmid] = get_xpath(epmc_xml,'//pmid')
   article[:doi] =  get_xpath(epmc_xml,'//doi')
-  article[:title] = get_xpath(epmc_xml,'//result//title')
+  article[:title] = get_xpath(epmc_xml,'/title')
   article[:journal] = get_xpath(epmc_xml,'//journal//title')
   article[:cited_by_count] = get_xpath(epmc_xml,'//citedbycount')
-  authorlist = []
-  pubtypes = []
+  article[:affiliation] = get_xpath(epmc_xml, './affiliation')
+  
+  authorlist, pubtypes = [], []
   epmc_xml.xpath('//pubtype').each {
     |pubtype| pubtypes << pubtype.content
   }
