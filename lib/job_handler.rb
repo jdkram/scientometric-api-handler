@@ -121,6 +121,7 @@ def csv_create(input_csv, output_csv: nil, api: nil)
       raise Interrupt, "User terminated run."
       rescue OpenURI::HTTPError => e
       if e.message == '502 Proxy Error'
+      File.delete(output_csv)
       puts "\n✘ Connection dropped, deleted partial output CSV: #{output_csv}\n".colorize(:red)
       else
         raise e
