@@ -97,7 +97,7 @@ def csv_create(input_csv, output_csv: nil, api: nil)
       # Use a sample known ID to create headers
       headers = call_api(SAMPLE_IDS[api], api).keys
       csv << headers
-      ids.shift unless check_id(ids[0], api) # Remove 'pmids' header
+      ids.shift unless check_id(ids[0][0], api) # Remove 'pmids' header
       ids.each_with_index do |id, i|
         unless check_id(id.first, api)  # Convert id from arr to str
           bad_ids << id[0]
@@ -147,12 +147,8 @@ def process_split_csvs(split_csv_directory, api)
         if skipped_files.length > 1
           puts "Skipped #{skipped_files[0]} - #{skipped_files[-1]}".colorize(:yellow)
           skipped_files.clear
-        elsif skipped_files.length == 1
-          puts "Skipped #{skipped_files[0]}".colorize(:yellow)
-          skipped_files.clear
         end
         puts "Processing #{file}..."
-
         # create full paths
         csv_create(input_file_full_name, output_csv: output_file_full_name, api: api)
         puts "#{file} completed, output saved to #{output_file}".colorize(:green)
