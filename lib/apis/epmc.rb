@@ -106,7 +106,7 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
           article[:WT_grants] << grant_id
           # Could be more specific than this, but lots of variants 
           # e.g. WT 087535MA, 096822/Z/11/Z
-          six_digit_grant_match = /(\d{6})/.match(grant_id)
+          six_digit_grant_match = /(\d{5,6})/.match(grant_id)
           if six_digit_grant_match
             article[:WT_six_digit_grants] << six_digit_grant_match[1]
           end
