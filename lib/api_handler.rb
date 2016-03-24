@@ -10,7 +10,8 @@ BASEURLS = {
   altmetric: "http://api.altmetric.com/v1/ID_TYPE/QUERY#{ALTMETRIC_API_KEY}",
   epmc: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=EXT_ID:QUERY&resulttype=core",
   grist: "http://plus.europepmc.org/GristAPI/rest/get/query=gid:QUERY&resulttype=core",
-  orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile"
+  orcid: "http://pub.orcid.org/v1.1/QUERY/orcid-profile",
+  epmc_search: "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resulttype=core"
 }
 
 def create_url(identifier, type)
