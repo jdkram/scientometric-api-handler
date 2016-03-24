@@ -64,7 +64,7 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
 
   article[:lastauthor] = authorlist[-1]
   last_author_xml = epmc_xml.xpath('//author').last.to_s
-  lastauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(first_author_xml)
+  lastauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(last_author_xml)
   if lastauthor_affiliation_match
     article[:lastauthor_affiliation] = lastauthor_affiliation_match[1] 
     else
