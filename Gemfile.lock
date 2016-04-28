@@ -1,35 +1,65 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.3.6)
-    ansi (1.4.3)
+    addressable (2.4.0)
+    ansi (1.5.0)
+    coderay (1.1.1)
     colorize (0.7.7)
-    crack (0.4.2)
+    crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    json (1.8.1)
-    mime-types (2.4.3)
-    mini_portile (0.6.1)
+    domain_name (0.5.20160310)
+      unf (>= 0.0.5, < 1.0.0)
+    hashdiff (0.3.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
+    json (1.8.3)
+    mechanize (2.7.4)
+      domain_name (~> 0.5, >= 0.5.1)
+      http-cookie (~> 1.0)
+      mime-types (>= 1.17.2, < 3)
+      net-http-digest_auth (~> 1.1, >= 1.1.1)
+      net-http-persistent (~> 2.5, >= 2.5.2)
+      nokogiri (~> 1.6)
+      ntlm-http (~> 0.1, >= 0.1.1)
+      webrobots (>= 0.0.9, < 0.2)
+    method_source (0.8.2)
+    mime-types (2.99.1)
+    mini_portile2 (2.0.0)
     minitest (4.7.5)
-    netrc (0.8.0)
-    nokogiri (1.6.4.1)
-      mini_portile (~> 0.6.0)
-    rake (10.3.2)
-    require_all (1.3.2)
-    rest-client (1.7.2)
+    net-http-digest_auth (1.4)
+    net-http-persistent (2.9.4)
+    netrc (0.11.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
+    ntlm-http (0.1.1)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    rake (11.1.2)
+    require_all (1.3.3)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     rushover (0.3.0)
       json
       rest-client
     safe_yaml (1.0.4)
-    smarter_csv (1.0.19)
+    slop (3.6.0)
+    smarter_csv (1.1.0)
     turn (0.9.7)
       ansi
       minitest (~> 4)
-    vcr (2.9.3)
-    webmock (1.20.4)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
+    vcr (3.0.1)
+    webmock (2.0.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
+      hashdiff
+    webrobots (0.1.2)
 
 PLATFORMS
   ruby
@@ -37,7 +67,9 @@ PLATFORMS
 DEPENDENCIES
   colorize
   json
+  mechanize
   nokogiri
+  pry
   rake
   require_all
   rushover
