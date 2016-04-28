@@ -15,7 +15,7 @@ class TestEPMC < Minitest::Unit::TestCase
 
   def test_doi # Testing a single article ot ensure DOI retrieval works
     VCR.use_cassette('epmc') do
-      epmc_hash = get_epmc(PMID, false)
+      epmc_hash = get_epmc_by_pmid(PMID, false)
       assert_equal epmc_hash[:doi], '10.1212/wnl.51.6.1546'
     end
   end
