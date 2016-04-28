@@ -1,15 +1,21 @@
 require 'csv'
 require 'smarter_csv'
 require 'colorize'
+require 'pushover'
 
 require_relative '../lib/api_handler'
 require_relative '../lib/id_checker'
 
+Pushover.configure do |config|
+  config.user= PUSHOVER_USER_KEY
+  config.token= PUSHOVER_API_KEY
+end
+
+# Pushover.notification(message: 'message', title: 'title')
+
+
 # Take an input CSV
 # Create a working directory for it, split it up
-
-
-
 def split_csv(csv, chunk_size=100)
   # Create a folder to put the split CSVs in
   filename = File.basename(csv, ".csv")
