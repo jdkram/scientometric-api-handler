@@ -54,13 +54,15 @@ Retrieved data:
 - **dateofcreation**: one of many date fields in EPMC
 - **authorstring**: all of the authors, pushed in to one string
 - **firstauthor**: first author in list
+- **firstauthor_affiliation**: institutional affiliation of first author
 - **lastauthor**: last author in list
+- **lastauthor_affiliation**: institutional affiliation of last author
 - **url**
 - **affiliations**: list of all affiliations. Duplicate values deleted - save on space, and we don't necessarily know which author an affiliation corresponds to if the two list are side by side
 - **number_of_grants**
 - **all_grants**
 - **WT_grants**: all grants with "Wellcome Trust"
-- **WT_six_digit_grants**: pulling out any six digit value we can find in those WT grants
+- **WT_six_digit_grants**: pulling out any five or six digit value we can find in those WT grants
 - **hasTextMinedTerms**
 - **hasLabsLinks**
 - **labsLinks**
@@ -80,13 +82,15 @@ Retrieved data:
     - [x] Pull out WT related funding and cleaned, unique six digit grant codes
 - [ ] Change EPMC to use JSON
 - [ ] Abstract method for checking if fields are part of the EPMC metadata (lots of repetition in `api_caller.rb`)
-- [ ] Add EPMC search - ability to download all the results for a query (beyond the first 2000 available via web interface)
-- [ ] Add time to completion for all PMIDs currently being processed
+- [x] Add EPMC search - ability to download all the results for a query (beyond the first 2000 available via web interface)
+- [x] Add time to completion for all PMIDs currently being processed
 
 ## Sample search strings ##
 
 EPMC CORE SEARCH: <http://www.ebi.ac.uk/europepmc/webservices/rest/search/query=QUERY&resulttype=core>
+
 [LABSLINKS (MED)](http://www.ebi.ac.uk/europepmc/webservices/rest/MED/24727771/labsLinks)
+
 [Grant lookup](http://europepmc.org/GrantLookup/details.php?all=&init=&name=&title=&key=&i=&gid=082178&f%5B%5D=ACT&f%5B%5D=ARC&f%5B%5D=FWF&f%5B%5D=BBSRC&f%5B%5D=BBC&f%5B%5D=BCC&f%5B%5D=BHF&f%5B%5D=CRUK&f%5B%5D=CSO&f%5B%5D=DUK&f%5B%5D=DMT&f%5B%5D=ERC&f%5B%5D=MCCC&f%5B%5D=MRC&f%5B%5D=MNDA&f%5B%5D=MSS&f%5B%5D=MT&f%5B%5D=NC3RS&f%5B%5D=DH&f%5B%5D=PUK&f%5B%5D=PCUK&f%5B%5D=TI&f%5B%5D=WT&f%5B%5D=WCR&f%5B%5D=YCR&uid=8486&bid=3)
 
 Nice publications: <http://europepmc.org/search?query=PUB_TYPE%3A%22practice%20guideline%22%20NICE>
