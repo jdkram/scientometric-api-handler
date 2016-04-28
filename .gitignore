@@ -24,3 +24,5 @@ task.rb
 .Rproj.user
 .RData
 .Rhistory
+output.txt
+*.Rproj
