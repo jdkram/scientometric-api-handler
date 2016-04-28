@@ -12,49 +12,60 @@ def get_xpath(xml,path)
   end
 end
 
-def get_epmc(pmid: , raw: false, follow_labslinks: true)
+
+def get_epmc_by_pmid(pmid: , raw: false, follow_labslinks: false)
   # Add sanitisation
   pmid = pmid.to_s
   url = create_url(pmid, :epmc)
   epmc_xml = Nokogiri::HTML(open(url))
   epmc_xml = epmc_xml.xpath('//result')
+  process_epmc_result(result: epmc_xml, raw: raw, follow_labslinks: follow_labslinks)
+end
+
+def process_epmc_result(result: , raw: false, follow_labslinks: false)
+  epmc_xml = result
 
   ## PARSE BASIC ARTICLE METADATA ##
   article = {}
-  article[:pmid] = get_xpath(epmc_xml,'//pmid')
-  article[:doi] =  get_xpath(epmc_xml,'//doi')
-  article[:title] = get_xpath(epmc_xml,'/title')
-  article[:journal] = get_xpath(epmc_xml,'//journal//title')
-  article[:cited_by_count] = get_xpath(epmc_xml,'//citedbycount')
+  article[:pmid] = get_xpath(epmc_xml,'.//pmid')
+  article[:doi] =  get_xpath(epmc_xml,'.//doi')
+  article[:title] = get_xpath(epmc_xml,'./title')
+  article[:journal] = get_xpath(epmc_xml,'.//journal//title')
+  article[:cited_by_count] = get_xpath(epmc_xml,'.//citedbycount')
   article[:affiliation] = get_xpath(epmc_xml, './affiliation')
   
   authorlist, pubtypes = [], []
-  epmc_xml.xpath('//pubtype').each {
+  epmc_xml.xpath('.//pubtype').each {
     |pubtype| pubtypes << pubtype.content
   }
   article[:pubtypes] = if pubtypes.empty? then article[:pubtypes] = '' else article[:pubtypes] = pubtypes end
   
   idlist = []
-  epmc_xml.xpath('//authoridlist/authorid').each {
+  epmc_xml.xpath('.//authoridlist/authorid').each {
     | authorid | idlist << authorid.content
   }
-  article[:author_ids] = if idlist.empty? then '' else idlist end
+  article[:author_ids] = if idlist.empty? then '' else idlist.uniq end
   
   meshheadings = []
-  epmc_xml.xpath('//descriptorname').each {
+  epmc_xml.xpath('.//descriptorname').each {
     |heading| meshheadings << heading.content
   }
   article[:mesh_headings] = if meshheadings.empty? then '' else meshheadings end
 
-  article[:abstract] = get_xpath(epmc_xml,'//abstracttext')
-  article[:dateofcreation] = get_xpath(epmc_xml,'//dateofcreation')
-  article[:authorstring] = get_xpath(epmc_xml,'//authorstring')
-  epmc_xml.xpath('//author//fullname').each do |author|  
+  article[:abstract] = get_xpath(epmc_xml,'.//abstracttext')
+  article[:dateofcreation] = get_xpath(epmc_xml,'.//dateofcreation')
+  article[:authorstring] = get_xpath(epmc_xml,'.//authorstring')
+  article[:num_authors] = authorlist.length
+  if article[:num_authors] == 0 # bug with authors not having their own metadata
+    article[:num_authors] = article[:authorstring].count(',') + 1
+  end
+  epmc_xml.xpath('.//author//fullname').each do |author|  
     authorlist << author.content
   end
-  
+
+
   article[:firstauthor] = authorlist[0]
-  first_author_xml = epmc_xml.xpath('//author').first.to_s 
+  first_author_xml = epmc_xml.xpath('.//author').first.to_s 
   firstauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(first_author_xml)
   if firstauthor_affiliation_match
     article[:firstauthor_affiliation] = firstauthor_affiliation_match[1]
@@ -63,7 +74,7 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
   end
 
   article[:lastauthor] = authorlist[-1]
-  last_author_xml = epmc_xml.xpath('//author').last.to_s
+  last_author_xml = epmc_xml.xpath('.//author').last.to_s
   lastauthor_affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(last_author_xml)
   if lastauthor_affiliation_match
     article[:lastauthor_affiliation] = lastauthor_affiliation_match[1] 
@@ -71,11 +82,12 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
     article[:lastauthor_affiliation] = ''
   end
 
-  article[:url] = if epmc_xml.at_xpath('//url') then epmc_xml.at_xpath('//url').content else '' end
+  article[:url] = if epmc_xml.at_xpath('.//url') then epmc_xml.at_xpath('.//url').content else '' end
   
   
   article[:author_affiliations] = []
-  epmc_xml.xpath('//author//affiliation').each do |affiliation|
+  article[:num_author_affiliations] = epmc_xml.xpath('.//author//affiliation').length
+  epmc_xml.xpath('.//author//affiliation').each do |affiliation|
     affiliation = affiliation.to_s
     affiliation_match = /\<affiliation\>([^<]+)\<\/affiliation\>/.match(affiliation)
     if affiliation_match
@@ -86,11 +98,12 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
   article[:author_affiliations].uniq!
 
   ## PARSE GRANT METADATA ##
-  article[:number_of_grants] = epmc_xml.xpath('//grant').length
+  article[:number_of_grants] = epmc_xml.xpath('.//grant').length
+  article[:num_unique_WT_grants] = 0
   article[:all_grants] = []
   article[:WT_grants] = []
   article[:WT_six_digit_grants] = []
-  epmc_xml.xpath('//grant').each do |grant|  
+  epmc_xml.xpath('.//grant').each do |grant|  
     grant = grant.to_s
     grant_id_match = /\<grantid\>([^<]+)\<\/grantid\>/.match(grant)
     agency_match = /\<agency\>([^<]+)\<\/agency\>/.match(grant)
@@ -109,6 +122,9 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
           six_digit_grant_match = /(\d{5,6})/.match(grant_id)
           if six_digit_grant_match
             article[:WT_six_digit_grants] << six_digit_grant_match[1]
+            article[:WT_six_digit_grants].map { |grantnum| grantnum.to_s.rjust(6, "0") }
+            article[:WT_six_digit_grants].uniq!
+            article[:num_unique_WT_grants] = article[:WT_six_digit_grants].length
           end
         end
       else
@@ -117,11 +133,10 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
       end
       article[:all_grants] << str
     end
-    article[:WT_six_digit_grants].uniq!
   end
 
-  article[:hasTextMinedTerms] = get_xpath(epmc_xml,'//hastextminedterms')
-  article[:hasLabsLinks] = get_xpath(epmc_xml,'//haslabslinks')
+  article[:hasTextMinedTerms] = get_xpath(epmc_xml,'.//hastextminedterms')
+  article[:hasLabsLinks] = get_xpath(epmc_xml,'.//haslabslinks')
 
   if follow_labslinks
     if article[:hasLabsLinks] == 'Y' then
@@ -129,7 +144,7 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
       labs_url = labs_url.sub(/PMID/, pmid)
       labs_xml = Nokogiri::HTML(open(labs_url))
       labs_links_names = []
-      labs_xml.xpath('//name').each do |name|
+      labs_xml.xpath('.//name').each do |name|
         labs_links_names << name.content
       end
         article[:labsLinks] = labs_links_names
@@ -138,44 +153,26 @@ def get_epmc(pmid: , raw: false, follow_labslinks: true)
     end
 
   ## EXAMINE DATABASE METADATA
-  if epmc_xml.at_xpath('//hasdbcrossreferences') && epmc_xml.at_xpath('//hasdbcrossreferences').content == 'Y' then
-    article[:hasDbCrossReferences] = 'Y'
-    dbnames = []
-    epmc_xml.xpath('//dbname').each do |dbname|
-      dbnames << dbname.content
+    if epmc_xml.at_xpath('.//hasdbcrossreferences') && epmc_xml.at_xpath('.//hasdbcrossreferences').content == 'Y' then
+      article[:hasDbCrossReferences] = 'Y'
+      dbnames = []
+      epmc_xml.xpath('.//dbname').each do |dbname|
+        dbnames << dbname.content
+      end
+      article[:dbCrossReferenceList] = dbnames
+    else
+      article[:hasDbCrossReferences] = 'N'
+      article[:dbCrossReferenceList] = ''
     end
-    article[:dbCrossReferenceList] = dbnames
-  else
-    article[:hasDbCrossReferences] = 'N'
-    article[:dbCrossReferenceList] = ''
   end
-end
 
+  article[:query] = get_xpath(epmc_xml,'//query')
+  article[:retrieval_time] = Time.now
   if raw then # Inefficient to have run all the stuff to generate article then return epmc_xml, 
               # ... but then I don't really care as this is for testing
     return epmc_xml
   else
     return article
-  end
-end
-
-def get_epmc_citations(pmid, src: false, raw: false)
-  pmid = pmid.to_s
-  article = {}
-  article[:pmid] = pmid
-  sources = %w(AGR CBA CTX ETH HIR MED PAT PMC)
-  if src
-  then
-    url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
-    epmc_xml = Nokogiri::HTML(open(url))
-    article["#{src}_citation_count".to_sym] = epmc_xml.at_xpath('//hitcount').content
-  else
-    sources.each do |source|
-      url = 'http://www.ebi.ac.uk/europepmc/webservices/rest/' + source + '/' + pmid + '/citations'
-      epmc_xml = Nokogiri::HTML(open(url))
-      article["#{source}_citation_count".to_sym] = epmc_xml.at_xpath('//hitcount').content
-      sleep 1
-    end
   end
 end
 
