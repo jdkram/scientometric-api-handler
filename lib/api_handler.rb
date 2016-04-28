@@ -36,7 +36,7 @@ def call_api(id, api, raw: false)
   api = api.to_sym
   case api
   when :epmc
-    get_epmc(pmid: id, raw: raw)
+    get_epmc_by_pmid(pmid: id, raw: raw)
   when :altmetric
     get_altmetric(id, raw)
   when :orcid
