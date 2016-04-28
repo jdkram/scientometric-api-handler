@@ -158,3 +158,16 @@ def process_split_csvs(split_csv_directory, api)
       end
     end
 end
+
+def extract_pmid_column(input_csv:, output_csv:)
+  puts "Extracting PMIDs column from #{input_csv}"
+  input_csv = CSV.read(input_csv, encoding: 'utf-8')
+  col = input_csv[0].index{|header| /pmids?|PMIDS?/ =~ header}
+  puts "Error: no pmids or PMIDS column found" if col.nil?
+  CSV.open(output_csv,'w') do |csv| 
+    input_csv.each do |row|
+      csv << [row[col]]
+    end
+    puts "PMIDs written to #{output_csv}"
+  end
+end
