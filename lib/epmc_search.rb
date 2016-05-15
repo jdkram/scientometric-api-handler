@@ -70,12 +70,20 @@ def epmc_search(job_name: , query:)
         avg_time_in_ms = times.inject{ |sum, el| sum + el }.to_f / times.size
         num_left = search[:num_pages].to_i - page.to_i
         finish_time = t2 + (avg_time_in_ms / 1000 * num_left)
-        puts "#{t2.strftime('%H:%M')}: Page #{page} / #{search[:num_pages]} complete taking #{diff}ms.".colorize(:green)
+        puts "#{t2.strftime('%H:%M')}: Page #{page} / #{search[:num_pages]} complete taking #{(diff/1000.0).round(1)}s.".colorize(:green)
         puts "Approximate completion time:#{finish_time}."
         save_search_progress(file: log, search: search)
       rescue OpenURI::HTTPError => e
         if e.message == '502 Proxy Error'
+          puts "Connection failed, retrying...".colorize(:yellow)
           retry unless (tries -= 1).zero? # 5 tries per request
+        end
+      rescue Errno::ENETUNREACH => e
+        if (tries -= 1).zero?
+          puts "Connection failed, retrying...".colorize(:yellow)
+          retry
+        else
+          puts "5 consecutive errors connecting: #{e.message}"
         end
       end
     end
