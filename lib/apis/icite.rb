@@ -33,7 +33,7 @@ def batch_process_pmids_in_icite(input_csv:, output_csv:)
       end
     end
       puts "Added #{articles.length} articles - block #{i}/#{num_blocks}".colorize(:green)
-    sleep 1
+    sleep 0.1
     rescue OpenURI::HTTPError => e
         if e.message == '502 Proxy Error'
           puts "Connection failed, retrying...".colorize(:yellow)
